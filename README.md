@@ -2,12 +2,12 @@
 
 Der Code ist in mehreren "Ebenen" organisiert:
 1. R Funktionen in dem Ordner "funktionen" und C++ Funktionen im Ordner "funktionen_cpp"
-   - funktionen:
-   - genKS.R: simuliert künstliche Wissensstruktur
-   - simMissingsBlim.R: simuliert basierend auf einer WS samt beta, eta, mu_q und mu_q_ Antwortmuster
+   - "funktionen":
+      - genKS.R: simuliert künstliche Wissensstruktur
+      - simMissingsBlim.R: simuliert basierend auf einer WS samt beta, eta, mu_q und mu_q_ Antwortmuster
 
-   - funktionen_cpp:
-   - BLIM_combi.R: Wrapper Funktion, ruft die C++ Funktionen EMblim.cpp, EMimblim.cpp und EMmissblim.cpp auf, welche entsprechend die EM-Modellschätzung durchführen.
+   - "funktionen_cpp":
+      - BLIM_combi.R: Wrapper Funktion, ruft die C++ Funktionen EMblim.cpp, EMimblim.cpp und EMmissblim.cpp auf, welche entsprechend die EM-Modellschätzung durchführen.
 
 2. "Übergeordnete" Funktionen
    - data_sim.R: Simuliert Datensätze basierend auf der simulierten WS mit entsprechenden mu_q und mu_q_ Parametern, ruft simMissingsBlim.R auf.
