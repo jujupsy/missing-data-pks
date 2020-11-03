@@ -1,0 +1,1259 @@
+\documentclass[12pt, a4paper]{article}
+\usepackage[margin=3cm]{geometry}
+\usepackage[ngerman]{babel}
+\usepackage{graphicx}
+\usepackage[latin1]{inputenc}
+%\usepackage[utf8]{inputenc}
+\usepackage[natbibapa]{apacite}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{siunitx}
+\usepackage{multirow,booktabs,setspace,caption}
+\usepackage{tabularx}
+\usepackage[titles]{tocloft}
+
+\usepackage[hidelinks]{hyperref}
+
+%\setlength {\marginparwidth} {2cm}
+%\usepackage{todonotes}
+
+\DeclareCaptionLabelSeparator*{spaced}{\\[2ex]}
+\captionsetup[table]{textfont=it,format=plain,justification=justified,
+  singlelinecheck=false,labelsep=spaced,skip=0pt}
+\captionsetup[figure]{labelsep=period,labelfont=it,justification=justified,
+  singlelinecheck=false,font=doublespacing}
+
+%tocloft list of tables and figures prefix
+\newlength\mylena
+\settowidth\mylena{Abbildung }
+\newlength\mylenb
+\settowidth\mylenb{Tabelle }
+ 
+\addtolength\cftfignumwidth{\mylena}
+\addtolength\cfttabnumwidth{\mylenb}
+ 
+\renewcommand\cftfigpresnum{Abbildung }
+\renewcommand\cfttabpresnum{Tabelle }
+ 
+\renewcommand\cftfigaftersnum{.}
+\renewcommand\cfttabaftersnum{.}
+
+\linespread{1.3}
+
+\begin{document}
+
+%\SweaveOpts{prefix.string=plots/plot}
+\SweaveOpts{concordance=TRUE}
+%EXTERNAL FILES NEEDED TO COMPILE THIS FILE AND BASIC VARIABLES
+<<echo=FALSE, results=hide>>=
+library(lattice)
+library(ggplot2)
+library(extrafont)
+#font_install('fontcm')
+loadfonts()
+library("relations")
+# BiocManager::install("Rgraphviz")
+library("Rgraphviz")
+
+load("data/fitted_models_tKS_1432_1e+05_200_42.rda")
+options(scipen = 999)
+NinSet = 100000
+NofSets = 200
+@
+
+%Titelseite
+\input{parts/titelseite}
+
+\newpage
+
+
+\pagestyle{myheadings}
+\setcounter{page}{2}
+
+% Inhaltsverzeichnis
+
+\tableofcontents
+\newpage
+
+\listoftables
+\newpage
+
+\listoffigures
+\newpage
+
+% Seitenzahlen und aktueller Bereich in der Kopfzeile
+\pagestyle{headings}
+
+
+%Abstract
+\section*{Abstract}
+Bei der Durchführung psychologischer Tests kommt es häufig dazu, dass Personen einzelne Fragen auslassen und keine Antwort geben. Diese fehlenden Daten stellen bei der Diagnose unterliegender Fähigkeiten ein statistisches Problem dar, da der Prozess, der diese erzeugt oft unbeachtet bleibt. Aufbauend auf eine Arbeit von \citet{DeChiusole2015} wurden zwei Modelle untersucht, die im Rahmen der Theorie der Wissensstrukturen unterschiedliche Ursachen bzw. Prozesse betrachten, die zu fehlenden Daten führen und diese modellieren. Auf Grundlage einer simulierten Wissensstruktur und empirischen Wissensstrukturen aus den Skalen Erregbarkeit, Gehemmtheit und Gesundheitssorgen des Freiburger Persönlichkeitsinventars wurden die Modelle hinsichtlich Parameterwiederherstellung und Wiederherstellung des latenten Wissenszustands verglichen. Außerdem wurde ein Vergleich mit dem Basic Local Independence Model mit ausschließlich kompletten Antwortmustern vorgenommen. Es zeigt sich, dass die Modelle, die in der Lage sind die fehlenden Daten zu modellieren besser die Parameter und latenten Wissenszustände wiederherstellen. Dieser Vorteil ist nicht davon abhängig, wie groß die Stichprobe ist, die der Schätzung zugrunde liegt. Weiterhin zeigen sich für das Basic Local Independence Model mit ausschließlich kompletten Antwortmustern starke Verzerrungen bei kleinen Stichproben und großem Anteil fehlender Antworten. Diese verschwinden jedoch mit zunehmender Stichprobengröße bzw. geringerem Anteil fehlender Daten zunehmend. Auch bei Anwendung der sog. Missing-As-Wrong Transformation weist das Basic Local Independence Model systematische Verzerrungen bei der Parameterschätzung und Wiederherstellung des latenten Wissenszustands auf.  Alles in allem zeigen sich für die beiden anderen Modelle deutliche Vorteile in der Parameterschätzung und Wiederherstellung des latenten Wissenszustands.
+
+\newpage
+
+%Einleitung
+\input{parts/einleitung}
+\clearpage
+
+%Umgang mit fehlenden Daten und Herleitung Modelle
+\input{parts/umgang_fehlende_daten_herleitung_modelle}
+
+%%%%% METHODEN %%%%%
+\section{Methoden}
+Die Anpassungen des BLIM für den Umgang mit fehlenden Daten wurden zuerst wie bei \citet{DeChiusole2015} anhand einer simulierten Wissensstruktur verglichen. Um jedoch zu überprüfen, ob diese Befunde sich auch basierend auf einer empirischen Wissensstruktur zeigen, wurden darüber hinaus drei empirische Wissensstrukturen aus der Normstichprobe des Freiburger Persönlichkeitsinventars \citep{Fahrenberg2010} hergeleitet.
+
+%Simulation und simulierte WS
+\subsection{Simulation der Daten und Wissensstruktur}
+Für den Vergleich der Modelle wurden verschiedene Datensätze simuliert. Dabei wurden äquivalent zu dem Vorgehen von \citet{DeChiusole2015} drei verschiedene Bedingungen betrachtet, wie die fehlenden Antworten zustande kommen können. Ausgangspunkt bildete eine simulierte Wissensstruktur $\mathcal{K}_s$ auf der Menge der Aufgaben $Q$ und eine Wahrscheinlichkeitsverteilung $\pi$ auf $\mathcal{K}_s$. Diese Wissensstruktur wurde zufällig aus der Potenzmenge $\mathcal{P}(Q)$ mit $|Q| = 25$ erzeugt, indem ohne zurücklegen zufällig 500 Elemente aus $\mathcal{P}(Q)$ gezogen wurden. Die Wahrscheinlichkeitsverteilung $\pi$ wurde generiert indem 500 mal aus der Gleichverteilung $\text{unif}(0, 1)$ gezogen wurde und diese Werte dann auf 1 summennormiert wurden. Die Parameter $\beta$ und $\eta$ wurden jeweils aus der Gleichverteilung $\text{unif}(0, 0.1)$ gezogen. Zwischen den verschiedenen simulierten Datensätzen variierten die Parameterwerte für die $\beta $-, $\eta$- und $\pi$-Parameter nicht.
+
+Die Simulation der Daten einer Person erfolgt folgendermaßen:
+
+\begin{enumerate}
+\item Ein Wissenszustand $K \in \mathcal{K}_s$ wird mit Wahrscheinlichkeit $\pi_K$ zufällig gezogen.
+\item Basierend auf diesem Wissenszustand $K$ wird mit Hilfe des BLIM und den zugehörigen Parametern $\beta$ und $\eta$ das vollständige Antwortmuster $R^{*}$ simuliert.
+\item Ein Dezimierungsmechanismus wählt aus $Q$ die Menge der fehlenden Antworten $M$. Dafür werden die Wahrscheinlichkeiten $P(q \in M \mid q \in K) = \mu_q$ und $P(q \in M \mid q \not\in K) = \mu_{\bar{q}}$ betrachtet. Diese korrespondieren zu den entsprechenden Parametern des MissBLIM und geben an, mit welcher Wahrscheinlichkeit eine Aufgabe, die in $K$ enthalten ist, nicht beantwortet wird, $P(q \in M \mid q \in K)$, bzw. mit welcher Wahrscheinlichkeit eine Aufgabe, die nicht in $K$ enthalten ist, nicht beantwortet wird, $P(q \in M \mid q \not\in K)$.
+\item Mit $R = R^{*} \setminus M$ erhält man dann das beobachtbare Antwortmuster $R$.
+\end{enumerate}
+\noindent
+Für jede simulierte Person ergibt sich somit ein Tripel bestehend aus Antwortmuster $R$, fehlenden Antworten $M$ und latentem Wissenszustand $K$. Ein simulierter Datensatz entsteht dann durch das $N$-fache Ausführen der Schritte 1-4. $N$ ist dementsprechend die Stichprobengröße. In Schritt 3 wurden verschiedene Dezimierungsmechanismen verwendet, die im folgenden erläutert und in Tabelle \ref{tab:sim_mu} zusammengefasst sind.
+
+\subsubsection{MCAR}
+Für die MCAR Bedingung (im Folgenden auch nur mc genannt) wird angenommen, dass der Dezimierungsmechanismus unabhängig vom Wissenszustand $K$ ist. Die Menge der fehlenden Antworten $M$ entsteht dann dadurch, dass jede Aufgabe $q \in Q$ mit einer festen Wahrscheinlichkeit in die Menge $M$ aufgenommen wird. In einem Datensatz war diese Wahrscheinlichkeit immer gleich, nahm aber über die Datensätze hinweg folgende Werte an: $\{0.1, 0.2, 0.3, 0.4 \}$.
+
+\subsubsection{ks-MNAR}
+In der ks-MNAR Bedingung (im Folgenden auch nur ks genannt) wird der Fall simuliert, dass Personen ein Item, welches sie nicht beherrschen ($q \not\in K$), mit einer gewissen Wahrscheinlichkeit nicht beantworten. Dafür wurde jede Aufgabe $q \not\in K$ mit einer Wahrscheinlichkeit der Menge $M$ zugeordnet. Über die Datensätze hinweg nahm diese Wahrscheinlichkeit folgende Werte an: $\{0.2, 0.4, 0.6, 0.8 \}$. Diese Wahrscheinlichkeiten entsprechen dem doppelten derer bei MCAR um den gleichen Anteil an fehlenden Antworten zu erzeugen. 
+
+\subsubsection{iks-MNAR}
+In der iks-MNAR Bedingung (im Folgenden auch nur iks genannt) variiert nun sowohl die Wahrscheinlichkeit, dass eine Aufgabe, die nicht im Wissenszustand $K$ enthalten ist, nicht beantwortet wird, als auch die Wahrscheinlichkeit, dass eine Aufgabe, die im Wissenszustand $K$ enthalten ist, keine Antwort erhält. Dafür wurden die Parameter $P(q \in M \mid q \in K) = \mu_q$ und $P(q \in M \mid q \not\in K) = \mu_{\bar{q}}$ aus Gleichverteilungen gezogen. Insgesamt wurden fünf Kombinationen $C1$ bis $C5$ betrachtet. Die genauen Gleichverteilungen für $\mu_q$ und $\mu_{\bar{q}}$ sind Tabelle \ref{tab:sim_mu} zu entnehmen.
+
+\begin{table}[hbtp]
+	\caption[Parameterwerte der Dezimierungsmechanismen für $\mathcal{K}_s$]{Parameterwerte $\mu_q$ und $\mu_{\bar{q}}$ der verschiedenen Dezimierungsmechanismen für die Datensätze basierend auf der simulierten Wissensstruktur $\mathcal{K}_s$.}
+	\label{tab:sim_mu}
+	    \SweaveInput{tabellen/tab_sim_mu}
+	    
+	\smallskip
+	\small\textit{Anmerkung}. Die tiefgestellten Zahlen bei den MCAR und ks-MNAR Kombinationen geben den zu erwartenden Anteil fehlender Antworten an.
+\end{table}
+\newpage
+Für jede dieser 13 Simulationsarten\footnote{Vier verschiedene MCAR, vier verschiedene ks-MNAR und fünf verschiedene iks-MNAR Bedingungen.} wurden \Sexpr{NofSets} Datensätze simuliert, die Stichprobengröße betrug dabei jeweils $N = $ \Sexpr{NinSet}. Diese großen simulierten Stichproben ermöglichen asymptotische Aussagen über die Modelle. Für eine Einschätzung bei kleineren Stichproben wurde $N$ darüber hinaus auch variiert. Es wurden Datensätze für die folgenden Werte $N = \{100, 200, 400, 800, 1600, 3200, 6400, 12800, 25600\}$ simuliert.
+
+
+\subsection{Empirische Wissensstruktur}
+%%%% FPI-R
+Außer der künstlich simulierten Wissensstruktur wurden auch drei empirische Wissensstrukturen auf Basis der Normierungsstichprobe des Freiburger Persönlichkeitsinventars \citep{Fahrenberg2010} hergeleitet. 
+Das FPI-R ist ein deutschsprachiger Persönlichkeitstest zur Messung individueller Persönlichkeitsmerkmale. Es handelt sich dabei um ein faktorenanalytisch und item-metrisch begründetes Verfahren \citep{Fahrenberg2010}, welches im deutschsprachigen Raum weit verbreitet ist. Einsetzbar ab 16 Jahren soll die Persönlichkeit auf 10 + 2 Skalen\footnote{Die Skalen des FPI-R lauten: Lebenszufriedenheit, Soziale Orientierung, Leistungsorientierung, Gehemmtheit, Erregbarkeit, Aggressivität, Beanspruchung, Körperliche Beschwerden, Gesundheitssorgen, Offenheit sowie die zwei Sekundärskalen Extraversion und Emotionalität im Sinne der Persönlichkeitstheorie Hans Jürgen Eysencks.} gemessen werden. Die insgesamt 138 Items werden dabei auf einer dichotomen Skala (\glqq Stimmt\grqq\ vs. \glqq Stimmt nicht\grqq) beantwortet. Es existiert eine geschlechts- und altersspezifische Normierungsstichprobe aus dem Jahr 1999 \citep{Fahrenberg2010} bestehend aus $N = 3740$ Probanden. Deren mittleres Alter betrug 45.84 Jahre $(SD = 17.66)$ und 47\% gaben an weiblich zu sein. 
+Für die Erstellung der Wissensstrukturen in R \citep{R} wurden ähnlich zu dem Vorgehen in der Bachelorarbeit von \citet{Maurer2019} die Skalen Erregbarkeit, Gehemmtheit und Gesundheitssorgen betrachtet und angelehnt an die Item Tree Analyse \citep{VanLeeuwe1974, Schrepp1999} die Wissensstrukturen erstellt. Dazu wurden die R-Pakete \glqq relations\grqq\ \citep{relR}, \glqq Rgraphviz\grqq\ \citep{Rgraphviz} und \glqq pks\grqq\ \citep{pks} verwendet. Die einzelnen Items der drei Skalen können Anhang B entnommen werden.
+
+Für die je 12 Items der Skalen Erregbarkeit, Gehemmtheit und Gesundheitssorgen\footnote{Diese Skalen wurden aus den 10 + 2 Skalen des FPI-R ausgewählt, da sie zu moderat großen Wissensstrukturen bei \glqq vergleichsweise guter Anpassung\grqq\ führen (J. Heller, Persönliche Kommunikation, 07.09.2020). Eine moderate Größe (500 - 1500) der Wissensstruktur war unumgänglich, da sonst der Rechenaufwand zu groß geworden wäre.} wurden jeweils nur die kompletten Antwortmuster betrachtet. Da in der Normierungsstichprobe fehlende Antworten enthalten waren, reduzierte sich die Stichprobengröße je nach Skala etwas. In Tabelle \ref{tab:skalen_emp} sind die absolute Häufigkeit fehlender Antworten sowie die Anzahl einzigartiger Antwortmuster für die drei Skalen zusammengefasst. Die Stichprobenkennwerte für die Stichproben der einzelnen Skalen veränderten sich aufgrund der fehlenden Daten nur marginal.
+
+
+\begin{table}[hbtp]
+	\caption[Fehlende Antworten und Schwelle $L$ der emp. Skalen]{Absoluter Anteil fehlender Antworten (0, 1 oder 2), Anzahl verschiedener Antwortmuster sowie der gewählte Schwellenwert $L$ für die drei Skalen des FPI-R.}
+	\label{tab:skalen_emp}
+	    \SweaveInput{tabellen/tab_skalen_emp}
+	    
+	\smallskip
+	\small\textit{Anmerkung}. Aufgrund einiger Antwortmuster mit fehlenden Antworten reduziert sich die zugrunde liegende Stichprobe für jede Skala entsprechend.   
+\end{table}
+
+
+Zur Untersuchung der Abhängigkeitsbeziehungen wurden alle paarweisen Kombinationen der Items $p, q \in Q$ für alle Skalen getrennt betrachtet. Die absolute Häufigkeit $b_{pq}$ mit der Item $p$ mit \glqq Stimmt nicht\grqq\ und gleichzeitig Item $q$ mit \glqq Stimmt\grqq\ beantwortet wurde, stellt dann ein Maß dafür dar, wie stark für dieses Item die Precedence-Relation $p \preccurlyeq q$ (vgl. Einleitung) verletzt ist. Für die Erstellung einer Wissensstruktur muss nun eine Schwelle $L$ definiert werden. Solange $b_{pq}\leq L$ gilt, wird eine Abhängigkeitsbeziehung zwischen den Items $p$ und $q$, wie in der Precedence-Relation beschrieben, konstatiert und in die Struktur aufgenommen. Die entsprechenden Schwellenwerte, die eine gute Anpassung bei moderater Größe der Wissensstruktur erzielten (J. Heller, Persönliche Kommunikation, 07.09.2020) sind Tabelle \ref{tab:skalen_emp} zu entnehmen. Mit diesen wurden die Precedence-Relationen $\preccurlyeq_{err}$, $\preccurlyeq_{geh}$ und $\preccurlyeq_{ges}$ sowie darauf aufbauend die Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$ bestimmt. 
+Mit den absoluten Häufigkeiten für die verschiedenen Antwortmuster wurde nun das BLIM mit dem EM-Algorithmus an jede der drei Wissensstrukturen angepasst. Auf Basis der erhaltenen Parameter $\beta$, $\eta$ und $\pi$ wurden dann äquivalent zu dem Vorgehen bei der simulierten Wissensstruktur $\mathcal{K}_s$ neue Datensätze mit fehlenden Daten simuliert. Auch hierbei wurden die drei verschiedenen Dezimierungsmechanismen MCAR, ks-MNAR und iks-MNAR angewendet. Aufgrund der Befunde in der Normierungsstichprobe wurde der Anteil fehlender Daten jedoch auf maximal 15\% verringert, da bei den je 12 Items der Skalen maximal zwei fehlende ($\sim 17\%$) auftraten. Die entsprechenden Parameter für die verschiedenen Dezimierungsmechanismen sind Tabelle \ref{tab:sim_mu_emp} zu entnehmen. Es wurden für die drei Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$ in jeder Dezimierungsbedingung 200 Datensätze simuliert mit jeweils 3700 simulierten Antwortmustern\footnote{Diese Zahl war angelegt an die Stichprobengröße der Normierungsstichprobe des FPI-R.}. Außerdem wurden die gleichen Simulationen mit 10000 simulierten Antwortmustern durchgeführt, um das Verhalten bei einer größeren Stichprobe zu betrachten. Die Ergebnisse für die größere simulierte Stichprobe mit $N = 10000$ sind Anhang F zu entnehmen.
+
+\begin{table}[hbtp]
+	\caption[Parameterwerte der Dezimierungsmechanismen für die emp. Wissensstrukturen.]{Parameterwerte $\mu_q$ und $\mu_{\bar{q}}$ der verschiedenen Dezimierungsmechanismen für die simulierten Datensätze basierend auf den Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$ des FPI-R.}
+	\label{tab:sim_mu_emp}
+	    \SweaveInput{tabellen/tab_sim_mu_emp}
+	    
+	\smallskip
+	\small\textit{Anmerkung}. Die tiefgestellten Zahlen bei den MCAR und ks-MNAR Kombinationen geben den zu erwartenden Anteil fehlender Antworten an.
+\end{table}
+
+
+%%%%
+
+
+%Implementierung
+\subsection{Implementierung der Modelle in R}
+Um die Modelle BLIM (BLIM\textsubscript{MAW} bzw. BLIM\textsubscript{COMP}), IMBLIM und MissBLIM an die simulierten Datensätze anzupassen, wurden diese in R \citep{R} bzw. C++ \citep{cpp_overview} mit Hilfe der Pakete \glqq Rcpp\grqq\ \citep{Rcpp} und \glqq RcppEigen\grqq\ \citep{RcppEigen} implementiert. Die Zuhilfenahme einer kompilierten Programmiersprache wie C++ und der Vorlagenbibliothek \glqq Eigen\grqq\ \citep{Eigen} für die lineare Algebra war nötig um die Rechenzeiten zu verkürzen und die CPU- und Arbeitsspeicherressourcen effizienter zu nutzen.
+
+%Modellvergleich
+\subsection{Modellvergleich}
+Um die verschiedenen Modelle zu vergleichen wurden äquivalent zu dem Vorgehen von \citet{DeChiusole2015} sowohl die Verzerrungen der Parameterschätzungen $\hat{\beta}_q - \beta_q^{true}$ und $\hat{\eta}_q - \eta_q^{true}$ berechnet als auch die Wiederherstellung des unterliegenden Wissenszustands $K$ betrachtet. Die Verzerrungen wurden jeweils in Abhängigkeit des Modells (BLIM\textsubscript{MAW}, BLIM\textsubscript{COMP}, IMBLIM und MissBLIM)  sowie des fehlende Daten generierenden Prozesses (MCAR, ks-MNAR und iks-MNAR) gemittelt und für einen Überblick wurde die mittlere Verzerrung über alle Aufgaben $q$ berechnet. Für die Wiederherstellung des unterliegenden Wissenszustands $K$ einer Person wurde der Modalwert der Wahrscheinlichkeiten $P(K \mid R, M, \hat{\theta})$ (vgl. Gleichung \eqref{eq:PKRM}) für alle $K \in \mathcal{K}$ berechnet und als der durch das Modell vorhergesagte unterliegende Wissenszustand $\hat{K}$ angenommen. Um die Genauigkeit von $\hat{K}$ zu bestimmen wurde die symmetrische Mengendistanz $\text{d}(\hat{K}, K^{true}) = |(\hat{K} \setminus K^{true}) \cup (K^{true} \setminus \hat{K})|$ für jedes an die Daten angepasste Modell berechnet. $K^{true}$ ist dabei der wahre Wissenszustand der Person. Auch die symmetrische Mengendistanz wurde in Abhängigkeit des Modells und des fehlende Daten generierenden Prozesses (MCAR, ks-MNAR und iks-MNAR) gemittelt, um die Daten besser veranschaulichen zu können.
+
+Zusätzlich zu den Auswertungen von \citet{DeChiusole2015} wurde auch die Streuung der Verzerrung für $\hat{\beta}_q$ und $\hat{\eta}_q$ für die verschiedenen Modelle betrachtet. Diese kann bei gleicher Verzerrung ein weiteres Kriterium für die Auswahl eines Modells darstellen.
+
+\newpage
+
+\section{Ergebnisse}
+Nachfolgend werden die Ergebnisse zuerst basierend auf der simulierten Wissensstruktur $\mathcal{K}_s$ und anschließend basierend auf den empirischen Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$ vorgestellt. Für die Abbildungen wurde das R-Paket \glqq ggplot2\grqq\ \citep{ggplot2} verwendet.
+
+\subsection{Simulierte Wissensstruktur}
+Die simulierte Wissensstruktur $\mathcal{K}_s$ umfasste 500 zufällige Wissenszustände $K \in \mathcal{K}_s$ und basierte auf einer Aufgabenmenge $Q$ mit 25 Elementen. Die $\beta$- und $\eta$-Parameter wurden zufällig aus der Gleichverteilung $\text{unif}(0, 0.1)$ gezogen. Es gab keine im Vorhinein festgelegten Abhängigkeiten und es wurden auch keinerlei Veränderungen (z.B. Abgeschlossenheit bezüglich Mengenvereinigung) an der simulierten Struktur vorgenommen. Das führt dazu, dass die enthaltenen Abhängigkeiten implizit und womöglich sehr zahlreich bleiben.
+
+\subsubsection{Parameterwiederherstellung}
+In Tabelle \ref{tab:bias} sind die Verzerrungen der Parameterschätzungen in Abhängigkeit des Modells und Dezimierungsmechanismus über die 25 Aufgaben gemittelt dargestellt. Abbildungen dieser Verzerrungen in Abhängigkeit der wahren Parameterwerte können Anhang C entnommen werden\footnote{Die Ergebnisse in den Abbildungen gehen wenig über die in Tabelle \ref{tab:bias} dargestellten Ergebnisse hinaus. Für eine Vergleichbarkeit mit den Ergebnissen von \citet{DeChiusole2015} wurden sie jedoch in Anhang C beigefügt.}. 
+Es zeigt sich für den MCAR-Fall, dass das BLIM\textsubscript{COMP} bei hinreichend großer Stichprobe keine systematischen Verzerrungen aufweist. Dies ist dann der Fall, wenn aufgrund nicht zu hohem Anteil fehlender Antworten die Stichprobe mit kompletten Daten noch hinreichend groß ist. Tabelle \ref{tab:n_comp} ist zu entnehmen, dass mit steigendem Anteil fehlender Daten, die Anzahl vollständiger Antwortmuster rapide zurückgeht. Das BLIM\textsubscript{MAW} dagegen zeigt deutliche Verzerrungen, die den in Gleichung \eqref{eq:maw_bias_beta} und \eqref{eq:maw_bias_eta} bestimmten theoretischen entsprechen. Für IMBLIM und MissBLIM gilt, dass diese bei MCAR keine systematischen Verzerrungen aufweisen. 
+
+
+<<echo=FALSE, results=hide>>=
+
+# remove estimates that did not converge
+#data_estim_raw <- data_estim
+
+not_converged <- unique(data_estim[(!is.na(data_estim$converged) & data_estim$converged == FALSE), c("cond", "model", "N", "iterations", "set_num")])
+
+data_estim <- data_estim[data_estim$converged, ]
+
+# Table Bias 
+data_estim$bias <- data_estim$estim_value - data_estim$true_value
+
+data_t1 <- subset(data_estim, para %in% c("beta", "eta"))
+
+data_t1$model <- factor(data_t1$model)
+data_t1$para  <- factor(data_t1$para)
+# works also with subset of data!
+level_cond <- c(paste0("mc_", (1:4)*10), paste0("ks_", (1:4) * 10), paste0("iks_C", 1:5))
+data_t1$cond  <- factor(data_t1$cond, levels = level_cond[which(level_cond %in% levels(factor(data_t1$cond)))])
+
+ag_t1 <- aggregate(bias ~ cond + model + para, data_t1, mean, drop = FALSE) 
+ag_t1_r <- ag_t1
+ag_t1_r$bias <- round(1000 * ag_t1_r$bias, 2)
+
+t1 <- ftable(ag_t1, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort ag_t1 to fit into ftable
+ag_t1 <- with(ag_t1, ag_t1[order(model, para, cond), ])
+
+t1[] <- array(ag_t1$bias, dim = dim(t1))
+
+t1_r <- round(t1*1000, 2)
+
+@
+
+\begin{table}[hbtp]
+	\caption[Verzerrung der Parameterschätzung für $\mathcal{K}_s$]{Verzerrungen der Parameterschätzungen in Abhängigkeit des Modells und Dezimierungsmechanismus über alle Aufgaben $q$ gemittelt.}
+	\label{tab:bias}
+    \SweaveInput{tabellen/tab_bias}
+    
+	\smallskip
+	\small\textit{Anmerkung}. Die Verzerrung wurde mit 1000 multipliziert, um die Darstellung zu verbessern. Die simulierte Stichprobengröße pro Datensatz war $N = $ \Sexpr{NinSet} mit je \Sexpr{NofSets} Datensätzen pro Simulationsart.
+\end{table}
+
+Für den ks-MNAR-Fall zeigen sich beim BLIM\textsubscript{COMP} ab $30\%$ fehlender Daten systematische Verzerrungen. Das BLIM\textsubscript{MAW} schätzt wie zu erwarten die $\beta$-Parameter genau, aber bei den $\eta$-Parametern ergeben sich die theoretisch zu erwarteten Verzerrungen. Das IMBLIM schneidet etwas schlechter als das BLIM\textsubscript{COMP} ab und das MissBLIM schätzt die Parameter wieder am genauesten.
+
+
+Für den iks-MNAR-Fall zeigt sich, dass das BLIM\textsubscript{COMP} die Parameter gut wiederherstellen kann. Das BLIM\textsubscript{MAW} weist gerade bei höherem Anteil fehlender Antworten große Verzerrungen auf, die auch in diesem Fall den theoretisch vorhergesagten entsprechen. Das IMBLIM zeigt in diesen extremen Bereichen ebenfalls leichte Verzerrungen. Das MissBLIM schneidet dagegen auch hier sehr gut ab, es sind praktisch keine systematischen Verzerrungen vorhanden.
+
+
+<<echo=FALSE, results=hide>>=
+n_comp <- aggregate(N ~ cond + model + para, data_t1, mean, drop = FALSE)
+n1 <- ftable(n_comp, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort n1 to fit into ftable
+n_comp <- with(n_comp, n_comp[order(model, para, cond), ])
+
+n1[] <- array(n_comp$N, dim = dim(n1))
+
+n1_r <- round(n1, 2)
+
+@
+
+
+\begin{table}[hbtp]
+	\caption[Anteil vollständiger Antwortmuster für das BLIM\textsubscript{COMP}]{Mittlere Anzahl $\bar{N}$ und relative Häufigkeit $h$ vollständiger Antwortmuster für die Anpassung des BLIM\textsubscript{COMP} in Abhängigkeit des Dezimierungsmechanismus.}
+	\label{tab:n_comp}
+    \SweaveInput{tabellen/tab_n_comp}
+    
+	\smallskip
+	\small\textit{Anmerkung}.  Die Relative Häufigkeit $h$ entspricht $\bar{N} \div$ \Sexpr{NinSet}. 
+\end{table}
+
+
+Für das MissBLIM wurde ebenfalls die Wiederherstellung der $\mu$- und $\bar{\mu}$-Parameter betrachtet. Wie Tabelle \ref{tab:bias_mu} zu entnehmen ist, wurden diese Parameter ebenfalls sehr genau wiederhergestellt. Sie entsprechen praktisch den wahren Parametern, die der Datensimulation zugrunde lagen bzw. für iks-MNAR dem jeweiligen Intervallmittelpunkt der zugrundeliegenden Gleichverteilung.
+
+<<echo=FALSE, results=hide>>=
+# Table Bias mu
+
+data_t2 <- subset(data_estim, para %in% c("mu0", "mu1") & model == "MissBLIM")
+
+data_t2$model <- factor(data_t2$model)
+data_t2$para  <- factor(data_t2$para)
+# works also with subset of data!
+level_cond <- c(paste0("mc_", (1:4)*10), paste0("ks_", (1:4)*10), paste0("iks_C", 1:5))
+data_t2$cond  <- factor(data_t2$cond, levels = level_cond[which(level_cond %in% levels(factor(data_t2$cond)))])
+data_t2$para  <- factor(data_t2$para, levels = c("mu1", "mu0"))
+
+ag_t2 <- aggregate(estim_value ~ cond + model + para, data_t2, mean)
+ag_t2_r <- ag_t2
+ag_t2_r$estim_value <- round(ag_t2_r$estim_value, 4)
+
+t2 <- ftable(ag_t2, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort ag_t1 to fit into ftable
+ag_t2 <- with(ag_t2, ag_t2[order(model, para, cond), ])
+
+t2[] <- array(ag_t2$estim_value, dim = dim(t2))
+
+t2_r <- round(t2, 3)
+
+
+@
+
+\begin{table}[hbtp]
+\caption[Geschätzte $\mu$- und $\bar{\mu}$-Parameter des MissBLIM für $\mathcal{K}_s$]{Geschätzte $\mu$- und $\bar{\mu}$-Parameter für das MissBLIM in Abhängigkeit des Modells und Dezimierungsmechanismus über alle Aufgaben $q$ gemittelt.}
+\label{tab:bias_mu}
+  \SweaveInput{tabellen/tab_bias_mu}
+  
+\end{table}
+
+
+<<echo=FALSE, results=hide>>=
+## SD Schaetzer (wie Tabelle 1 nur SD der Schaetzer, nicht mean)
+ag_sd1 <- aggregate(bias ~ cond + model + para, data_t1, sd, drop = FALSE)
+ag_sd1_r <- ag_sd1
+ag_sd1_r$bias <- round(ag_sd1_r$bias, 4)
+
+sd1 <- ftable(ag_sd1, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort ag_t1 to fit into ftable
+ag_sd1 <- with(ag_sd1, ag_sd1[order(model, para, cond), ])
+
+sd1[] <- array(ag_sd1$bias, dim = dim(sd1))
+
+sd1_r <- round(sd1*1000, 2)
+
+
+@
+
+Neben der mittleren Verzerrung ist auch deren Streuung (vgl. Tabelle \ref{tab:bias_sd}) von Interesse. Hierbei zeigte sich, dass für das BLIM\textsubscript{COMP} die Streuung mit steigendem Anteil fehlender Daten deutlich zunahm. Dies war bei allen drei Dezimierungsmechanismen der Fall. Die Streuung der Verzerrung des BLIM\textsubscript{MAW} war durchweg geringer, aber auch hierbei zeigten sich systematische Zusammenhänge: Mit steigendem Anteil fehlender Antworten, nahm die Streuung tendenziell zu. IMBLIM und MissBLIM zeigten Unterschiede bei hohem Anteil fehlender Daten. Das MissBLIM schnitt hier mit einer konstant geringen Streuung besser ab. Ansonsten waren diese beiden Modelle aber sehr ähnlich mit geringen Streuungen, die beim MissBLIM unabhängig vom Dezimierungsmechanismus waren. 
+
+\begin{table}[hbtp]
+	\caption[Streuung der Parameterschätzung für $\mathcal{K}_s$]{Standardabweichung der Verzerrungen der Parameterschätzungen in Abhängigkeit des Modells und Dezimierungsmechanismus über alle Aufgaben $q$ berechnet.}
+	\label{tab:bias_sd}
+    \SweaveInput{tabellen/tab_bias_sd}
+    
+	\smallskip
+	\small\textit{Anmerkung}. Die Standardabweichung der Verzerrung wurde mit 1000 multipliziert um die Darstellung zu verbessern. Die simulierte Stichprobengröße pro Datensatz war $N = $ \Sexpr{NinSet} mit je \Sexpr{NofSets} Datensätzen pro Simulationsart.
+\end{table}
+
+
+\paragraph{Parameterwiederherstellung und Stichprobengröße.}
+Das Ergebnis für die großen Stichproben mit $N = 100000$ zeigt das asymptotische Verhalten der Modelle. Um diese Verzerrungen zusätzlich in Abhängigkeit kleinerer Stichprobengrößen vergleichen zu können, wurden die gleichen Simulationen basierend auf der artifiziellen Wissensstruktur $\mathcal{K}_s$ mit entsprechend kleineren Stichprobengrößen ($N = \{100, 200, 400, \allowbreak 800, 1600, 3200, 6400, 12800, 25600\}$) durchgeführt. Es wurden hierbei für MCAR und ks-MNAR nur die Parameter betrachtet, die zu $10\%$ bzw. $20\%$ fehlenden Daten führen und für iks-MNAR nur die Kombinationen $\text{iks}_{C2}$ und $\text{iks}_{C4}$. Die anderen Werte waren hier aufgrund ihrer unrealistischen Höhe nicht von Interesse.  
+Abbildung \ref{fig:bias_n} zeigt die Verzerrung des $\beta$-Parameters der verschiedenen Modelle gemittelt über alle Aufgaben in Abhängigkeit der simulierten Stichprobengröße $N$ und des Dezimierungsmechanismus. Zusätzlich sind die Standardabweichungen für die Verteilungen der Verzerrungen als Fehlerbalken eingezeichnet.
+Es ist offensichtlich, dass das MissBLIM und IMBLIM beide unabhängig von der Stichprobengröße und bei allen Bedingungen sehr gut abschneiden. Die Streuung der Verzerrung ist bei $N = 100$ bereits sehr klein und nimmt mit steigendem $N$ weiter ab.
+Das BLIM\textsubscript{COMP} schneidet in der $\text{mc}_{10}$ und $\text{ks}_{10}$ Bedingung ebenfalls gut ab. Hier zeigen sich für Stichprobengrößen unter 500 zwar recht große Streuungen, diese verkleinern sich jedoch mit zunehmender Stichprobengröße. Für die $\text{mc}_{20}$ und $\text{ks}_{20}$ Bedingung zeigt sich bei geringen Stichprobengrößen eine große Verzerrung und Streuung. Diese nehmen jedoch mit steigender Stichprobengröße beide ebenfalls ab. Bei $\text{iks}_{C2}$ und $\text{iks}_{C4}$ weist das BLIM\textsubscript{COMP} eine starke Verzerrung und große Streuungen auf, die auch mit steigender Anzahl an Personen nicht schnell nachlässt.
+Am schlechtesten schneidet auch hier das BLIM\textsubscript{MAW} ab. Es zeigen sich relativ unabhängig von der Stichprobengröße die theoretisch vorhergesagten Verzerrungen (vgl. Gleichung \eqref{eq:maw_bias_beta}) für den $\beta$-Parameter. Zwar ist die Streuung recht gering, doch aufgrund der systematischen Verzerrung, die nicht mit steigender Stichprobengröße schwindet, ist die Wiederherstellungsleistung der Parameter für das BLIM\textsubscript{MAW} unzureichend.
+Die Verzerrungen für die $\eta$-Parameter in Abhängigkeit der Stichprobengröße $N$ unterscheiden sich strukturell nicht groß von denen der $\beta$-Parameter. Eine entsprechende Abbildung ist daher Anhang D zu entnehmen.
+
+\begin{figure}[hbtp]
+\begin{center}
+<<echo=FALSE, results=hide>>=
+load("data/ag_bias_n.rda")
+pdf("plots/bias_n.pdf", width = 5.9, height = 7.5, pointsize = 12, family="CM Roman")
+
+pd <- position_dodge(0) 
+
+cond.lab <- c("mc[10]", "mc[20]", "ks[10]", "ks[20]", "iks[C2]", "iks[C4]")
+ag_bias$cond <- factor(ag_bias$cond, labels = cond.lab)
+
+bp <- ggplot(ag_bias[ag_bias$para == "beta",], aes(x = n, y = bias, colour = model)) + 
+      geom_errorbar(aes(ymin = bias - SD, ymax = bias + SD), width = 1, position = pd) +
+      geom_line(position = pd) +
+      geom_point(position = pd, size = 1) +
+      theme(legend.position = "top") + 
+      labs(color = " ") + 
+      scale_colour_discrete(labels = c(expression("BLIM"[COMP]), expression("BLIM"[MAW]), "IMBLIM", "MissBLIM")) + 
+      xlab("Stichprobengröße N") + ylab("Verzerrung der Schätzung") +
+      #theme(text=element_text(family="CM Roman")) +
+      theme(axis.title.x = element_text(margin = margin(t = 8, r = 0, b = 0, l = 0))) + 
+      scale_x_continuous(trans = 'log2', breaks = c(100, 400, 1600, 6400, 25600))
+
+bp + facet_wrap(~ cond, ncol = 2,
+                labeller = label_parsed)
+dev.off()
+@
+\includegraphics[width=1\textwidth]{plots/bias_n}
+\end{center}
+\caption[$\beta$-Parameter in Abhängigkeit der Stichprobengröße $N$ für $\mathcal{K}_s$]{Verzerrung des $\beta$-Parameters der verschiedenen Modell gemittelt über alle Aufgaben in Abhängigkeit der simulierten Stichprobengröße $N$ und des Dezimierungsmechanismus basierend auf der Wissensstruktur $\mathcal{K}_s$. Zusätzlich sind die Standardabweichungen als Fehlerbalken eingezeichnet. Die Abszisse ist zur Basis 2 logarithmiert.}
+\label{fig:bias_n}
+\end{figure}
+
+
+\subsubsection{Wiederherstellung des latenten Wissenszustandes}
+Um neben der Genauigkeit der Parameterschätzung auch abschätzen zu können, wie gut die verschiedenen Modelle weiterhin in der Lage sind trotz fehlender Daten die latenten Wissenszustände der Personen zu identifizieren, wurde die symmetrische Distanz $\text{d}(\hat{K}, K^{true}) = |(\hat{K} \setminus K^{true}) \cup (K^{true} \setminus \hat{K})|$ für jede Person in allen Datensätzen berechnet. Es gilt auch hier, dass die Vergleichbarkeit zwischen dem BLIM\textsubscript{COMP} und den anderen Modellen eingeschränkt ist, da bei diesem aufgrund der ausgeschlossenen inkompletten Antwortmuster die Anzahl der betrachteten Fälle deutlich geringer ist (vgl. Tabelle \ref{tab:n_comp}). Daher werden diese Ergebnisse getrennt berichtet.
+Abbildung \ref{fig:m_dist} zeigt die gemittelte symmetrische Distanz in Abhängigkeit der Modelle und Dezimierungsmechanismen für die auf Basis der artifiziellen Wissensstruktur $\mathcal{K}_s$ simulierten Daten. Zusätzlich sind als Fehlerbalken die Standardabweichungen eingezeichnet. Es zeigt sich für die MCAR-Bedingung, dass das IMBLIM und MissBLIM fast identisch abschneiden. Die symmetrische Distanz vergrößert sich mit steigendem Anteil fehlender Daten, bleibt aber bis einschließlich 30\% unterhalb 1. Das BLIM\textsubscript{MAW} weist konstant deutlich höhere symmetrische Distanzen als IMBLIM und MissBLIM auf.
+Für den ks-MNAR Fall gilt, dass sowohl BLIM\textsubscript{MAW} als auch MissBLIM sehr gut abschneiden. Die mittleren symmetrischen Distanzen liegen teils so nahe an 0, dass sie auf Abbildung \ref{fig:m_dist} nicht zu erkennen sind. Gleiches gilt auch für deren Standardabweichungen. Das IMBLIM dagegen zeigt hier deutliche Defizite gegenüber den anderen Modellen: Mit über 6 wird bei 40\% fehlenden Daten der höchste Wert erreicht. 
+In der iks-MNAR Bedingung schneidet das MissBLIM am besten ab. Es zeigt für $C1$ und $C5$ sehr kleine Werte, die zwar zur Mitte ansteigen, aber unterhalb 0.5 bleiben. Die symmetrischen Distanzen beim IMBLIM sind sehr konstant auf dem höchsten Wert des MissBLIM. Das schlechteste Ergebnis liefert hier das BLIM\textsubscript{MAW} mit sich verringernder symmetrischer Distanz mit absteigendem $\mu_q$ Parameter ($C1 -  C5$).
+
+Das BLIM\textsubscript{COMP} schnitt grundsätzlich sehr gut ab, wenn der Anteil fehlender Daten nicht zu groß war. In den Extrembereichen zeigten sich dann aber große symmetrische Distanzen und Verzerrungen, die vermutlich aufgrund der geringen Anzahl kompletter Antwortmuster zustande kamen (vgl. Tabelle \ref{tab:n_comp}).
+
+<<echo=FALSE, results=hide>>=
+### assesment accuracy
+
+ag_asses <- aggregate(mean_dist ~ cond + model, data_t1, mean)
+ag_asses$SD <- aggregate(mean_dist ~ cond + model, data_t1, sd)[, 3]
+mat_dist <- matrix(ag_asses$mean_dist, nrow = 13, ncol = 4, byrow = F, dimnames = list(c("mc_10", "mc_20", "mc_30", "mc_40", "ks_10", "ks_20", "ks_30", "ks_40", "iks_C1", "iks_C2", "iks_C3", "iks_C4", "iks_C5"), c("BLIM_comp", "BLIM_maw", "IMBLIM", "MissBLIM")))
+
+mat_dist_sd <- matrix(ag_asses$SD, nrow = 13, ncol = 4, byrow = F, dimnames = list(c("mc_10", "mc_20", "mc_30", "mc_40", "ks_10", "ks_20", "ks_30", "ks_40", "iks_C1", "iks_C2", "iks_C3", "iks_C4", "iks_C5"), c("BLIM_comp", "BLIM_maw", "IMBLIM", "MissBLIM")))
+
+@
+
+\begin{figure}[hbtp]
+\begin{center}
+<<echo=FALSE, results=hide>>=
+pdf("plots/m_dist.pdf", width = 5.5, height = 3, pointsize = 12, family="CM Roman")
+par(mar = c(2, 3, .01, .01), mgp = c(2, .5, 0))
+bar <- barplot(t(mat_dist), beside = T, col = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF"), 
+        axes = F, cex.names = .7, border = NA,
+       ylab = "Mittlere symmetrische Distanz", ylim = c(0, 6.3), xlab = "Dezimierungsmechanismus",
+       names.arg = c(expression("mc"[10]), expression("mc"[20]), expression("mc"[30]), expression("mc"[40]),
+                     expression("ks"[10]), expression("ks"[20]), expression("ks"[30]), expression("ks"[40]),
+                     expression("iks"[C1]), expression("iks"[C2]), expression("iks"[C3]), expression("iks"[C4]), expression("iks"[C5])),
+       legend.text	= TRUE, args.legend=list(legend = c(expression("BLIM"[COMP]), expression("BLIM"[MAW]), "IMBLIM", "MissBLIM"), x = "topleft", bty = "n"))
+arrows(bar, t(mat_dist) - t(mat_dist_sd), bar, t(mat_dist) + t(mat_dist_sd), angle = 90, code = 3, length = .01, col = "gray18")
+abline(v = 20.5, lty = 2)
+abline(v = 40.5, lty = 2)
+axis(2)
+box()
+dev.off()
+@
+\includegraphics[width=.99\textwidth]{plots/m_dist}
+\end{center}
+\caption[Mittlere symmetrische Distanzen für $\mathcal{K}_s$]{Mittlere symmetrische Distanz in Abhängigkeit des Modells und Dezimierungsmechanismus basierend auf der Wissensstruktur $\mathcal{K}_s$.}
+\label{fig:m_dist}
+\end{figure}
+
+\newpage
+
+%%%%%% EMP WS
+\subsection{Empirische Wissensstrukturen}
+Die auf der Skala Erregbarkeit aus dem FPI-R \citep{Fahrenberg2010} aufbauende Wissensstruktur $\mathcal{K}_{err}$ umfasste 1120 Wissenszustände. Aufgrund der Methode der Erstellung war sie abgeschlossen bezüglich Mengenvereinigung und -durchschnitt und somit ein quasi-ordinaler Wissensraum. Die zugrunde liegende Precedence-Relation aus zwei Ebenen (vgl. Abbildung \ref{fig:prec_rel_err}) zeigt, dass die Items 52, 93, 108 und 113 keinerlei Abhängigkeiten zu den anderen aufweisen und somit keinen Beitrag zu der Struktur leisten.
+
+Für den Wissensraum auf der Skala Gehemmtheit ergab sich eine Kardinalität von  $|\mathcal{K}_{geh}| = 1024$, wobei die Items 4, 11, 73, 81, 120 und 124 keine Abhängigkeiten aufwiesen (vgl. Abbildung \ref{fig:prec_rel_geh}). Die zugehörige Precedence-Relation $\preccurlyeq_{geh}$ bestand aus drei Ebenen.
+
+Der letzte betrachtete Wissensraum auf der Skala Gesundheitssorgen umfasste 560 Wissenszustände und die Items 10 und 38 standen in keiner Abhängigkeit zu den anderen (vgl. Abbildung \ref{fig:prec_rel_ges}). Auch die Precedence-Relation $\preccurlyeq_{ges}$ hatte drei Ebenen.
+
+Alle drei Precedence-Relationen erfüllen die Eigenschaften Reflexivität ($\forall a \in Q: a\preccurlyeq a$), Transitivität ($\forall a,b,c \in Q: a\preccurlyeq b \land b\preccurlyeq c \implies a\preccurlyeq c $) und Antisymmetrie ($\forall a,b \in Q: a\preccurlyeq b \land b\preccurlyeq a \implies a = b $). Sie bilden daher je eine Halbordnung (I, $\preccurlyeq$) auf der zugehörigen Menge der Items I und man bezeichnet die korrespondierenden Wissensstrukturen dann auch als ordinale Wissensräume.
+
+\paragraph{Identifizierbarkeit.}
+Für die empirischen Wissensstrukturen wurde im Nachhinein aufgrund gewisser unerwarteter Effekte\footnote{Diese relativierten sich jedoch bei der später durchgeführten Simulation mit größerer Stichprobe $(N = 10000)$ wieder.} (vgl. Ergebnisse der $\beta$-Parameterschätzung bei Items 86 und 93 der Skala Erregbarkeit bei N = 3700) die Identifizierbarkeit der entsprechenden Paramter für das BLIM näher betrachtet, da vermutet wurde, dass diese Effekte eventuell dadurch bedingt sein könnten (J. Heller, Persönliche Kommunikation, 02.10.2020). Dabei zeigte sich, dass die Wissensstruktur $\mathcal{K}_{err}$ auf der Skala Erregbarkeit in dem maximalen Item 60 backward-graded und in den minimalen Items 52, 86, 93, 108, 115 und 135 forward-graded war. Dies führt zu einer fehlenden Identifizierbarkeit der entsprechenden $\beta$ bzw. $\eta$ Parametern \citep[][,Proposition 1 in Zusammenhang mit Corollary 1 i bzw. ii]{Heller2017}. Ebenso war die Wissensstruktur $\mathcal{K}_{geh}$ im maximalen Item 97 backward-graded und in den minimalen Items 4, 11, 63, 73, 81 und 109 forward-graded. Zuletzt galt auch für $\mathcal{K}_{ges}$, dass diese im maximalen Item 127 backward-graded und in den minimalen Items 10, 38 und 68 forward-graded war. Die möglichen Auswirkungen dieser fehlenden Identifizierbarkeit und die Betrachtung der Identifizierbarkeit im Zusammenhang mit dem IMBLIM und MissBLIM werden im folgenden nicht weiter betrachtet.
+
+<<echo=FALSE, results=hide>>=
+load("data/precedence_fpi_err.rda")
+pdf("plots/prec_rel_err.pdf", width = 5.5, height = 1.5, pointsize = 12, family = "CM Roman")
+par(mar = c(2, 3, .01, .01), mgp = c(2, .5, 0))
+plot(rel, main = "",
+     attrs = list(graph = list(rankdir = "BT"),
+                  edge = list(arrowsize = NULL),
+                  node = list(shape = "ellipse",
+                  fixedsize = FALSE)))
+
+dev.off()
+
+load("data/precedence_fpi_geh.rda")
+pdf("plots/prec_rel_geh.pdf", width = 5.5, height = 2, pointsize = 12, family = "CM Roman")
+par(mar = c(2, 3, .01, .01), mgp = c(2, .5, 0))
+plot(rel, main = "",
+     attrs = list(graph = list(rankdir = "BT"),
+                  edge = list(arrowsize = NULL),
+                  node = list(shape = "ellipse",
+                  fixedsize = FALSE)))
+
+dev.off()
+
+load("data/precedence_fpi_ges.rda")
+pdf("plots/prec_rel_ges.pdf", width = 5.5, height = 2, pointsize = 12, family = "CM Roman")
+par(mar = c(2, 3, .01, .01), mgp = c(2, .5, 0))
+plot(rel, main = "",
+     attrs = list(graph = list(rankdir = "BT"),
+                  edge = list(arrowsize = NULL),
+                  node = list(shape = "ellipse",
+                  fixedsize = FALSE)))
+
+dev.off()
+@
+\begin{figure}[hbt!]
+\begin{center}
+\includegraphics[width=.99\textwidth]{plots/prec_rel_err}
+\end{center}
+\caption[Hasse Diagramm der Precedence-Relation $\preccurlyeq_{err}$]{Hasse Diagramm der Precedence-Relation $\preccurlyeq_{err}$ der Skala Erregbarkeit.}
+\label{fig:prec_rel_err}
+\end{figure}
+
+\begin{figure}[htp]
+\begin{center}
+\includegraphics[width=.99\textwidth]{plots/prec_rel_geh}
+\end{center}
+\caption[Hasse Diagramm der Precedence-Relation $\preccurlyeq_{geh}$]{Hasse Diagramm der Precedence-Relation $\preccurlyeq_{geh}$ der Skala Gehemmtheit.}
+\label{fig:prec_rel_geh}
+
+\begin{center}
+\includegraphics[width=.99\textwidth]{plots/prec_rel_ges}
+\end{center}
+\caption[Hasse Diagramm der Precedence-Relation $\preccurlyeq_{ges}$]{Hasse Diagramm der Precedence-Relation $\preccurlyeq_{ges}$ der Skala Gesundheitssorgen.}
+\label{fig:prec_rel_ges}
+
+\end{figure}
+
+Nachfolgend sind für die drei empirischen Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$ zuerst die Ergebnisse bei der Wiederherstellung der Parameter und anschließende der Wiederherstellung des latenten Wissenszustandes aufgeführt. Die Stichprobengröße der simulierten Daten war $N = 3700$. 
+Die entsprechenden Abbildungen für eine Simulation mit einer größeren Stichprobe $(N = 10000)$ können Anhang F entnommen werden. Diese zeigen geringere Schwankungen und für bestimmte Items (vgl. Items 86 und 93 der Skala Erregbarkeit) tendenziell eine bessere Schätzung, gehen ansonsten aber nicht über die berichteten Ergebnisse hinaus.
+
+\subsubsection{Parameterwiederherstellung}
+In den Abbildungen \ref{fig:blim_comp_bias_emp} bis \ref{fig:missblim_bias_emp} sind für das BLIM\textsubscript{COMP}, BLIM\textsubscript{MAW}, IMBLIM bzw. MissBLIM die $\beta$-Parameterschätzungen für die simulierten Daten aus den Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$ in Abhängigkeit des wahren Parameterwertes für jedes Item und jeden Dezimierungsmechanismus dargestellt. Die entsprechenden Abbildungen für die Schätzungen der $\eta$-Parameter sind Anhang F zu entnehmen, zeigen aber für den Vergleich der Modelle sehr ähnliche Ergebnisse mit tendenziell geringeren Verzerrungen für die $\eta$-Parameter. Für die bessere Vergleichbarkeit mit den Ergebnissen der simulierten Wissensstruktur $\mathcal{K}_s$ sind entsprechende Tabellen für die empirischen Wissensstrukturen Anhang E zu entnehmen.
+
+Auffällig ist bei den Abbildungen \ref{fig:blim_comp_bias_emp} bis \ref{fig:missblim_bias_emp}, dass viele der wahren Parameterwerte sehr nahe an 0 liegen. Außerdem scheinen bestimmte Items grundsätzlich bei allen Modellen eine hohe Verzerrung aufzuweisen, die sich paradoxerweise mit steigendem Anteil fehlender Daten teilweise verringert. Dies ist vor allem bei der Skala Erregbarkeit für die Items 86 und 93 mit wahren $\beta$-Parameterwerten von 0.067 bzw. 0.104 auffallend. Bei einer größeren simulierten Stichprobe von $N = 10000$ ist dieses Phänomen schwächer ausgeprägt, verschwindet jedoch nicht vollkommen (vgl. Anhang F). 
+
+
+
+%% Tabellen emp bias (werden im Anhang verwendet, aber hier erzeugt, da der R Code eine Verschiebung kompliziert macht)
+%Skala Erregbarkeit
+<<echo=FALSE, results=hide>>=
+#
+## load emp WS fitted models
+load("data/fitted_models_tKS_fpi_err_3700_200_42.rda")
+
+# remove estimates that did not converge
+#data_estim_raw <- data_estim
+not_converged_emp_err <- unique(data_estim[(!is.na(data_estim$converged) & data_estim$converged == FALSE), c("cond", "model", "N", "iterations", "set_num")])
+data_estim <- data_estim[data_estim$converged, ]
+
+# Table Bias 
+data_estim$bias <- data_estim$estim_value - data_estim$true_value
+data_estim_err <- data_estim
+data_t1_emp <- subset(data_estim, para %in% c("beta", "eta"))
+
+data_t1_emp$model <- factor(data_t1_emp$model)
+data_t1_emp$para  <- factor(data_t1_emp$para)
+# works also with subset of data!
+level_cond <- c(paste0("mc_", c(1, 5, 10, 15)), paste0("ks_", c(1, 5, 10, 15)), paste0("iks_C", 1:4))
+data_t1_emp$cond  <- factor(data_t1_emp$cond, levels = level_cond[which(level_cond %in% levels(factor(data_t1_emp$cond)))])
+
+ag_t1_emp <- aggregate(bias ~ cond + model + para, data_t1_emp, mean, drop = FALSE) 
+ag_t1_emp_r <- ag_t1_emp
+ag_t1_emp_r$bias <- round(1000 * ag_t1_emp_r$bias, 2)
+
+t1_emp <- ftable(ag_t1_emp, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort ag_t1 to fit into ftable
+ag_t1_emp <- with(ag_t1_emp, ag_t1_emp[order(model, para, cond), ])
+
+t1_emp[] <- array(ag_t1_emp$bias, dim = dim(t1_emp))
+
+t1_r_emp_err <- round(t1_emp*1000, 2)
+data_t1_emp_err <- data_t1_emp
+@
+%Skala Gehemmtheit
+<<echo=FALSE, results=hide>>=
+#
+## load emp WS fitted models
+load("data/fitted_models_tKS_fpi_geh_3700_200_42.rda")
+
+# remove estimates that did not converge
+#data_estim_raw <- data_estim
+not_converged_emp_geh <- unique(data_estim[(!is.na(data_estim$converged) & data_estim$converged == FALSE), c("cond", "model", "N", "iterations", "set_num")])
+data_estim <- data_estim[data_estim$converged, ]
+
+# Table Bias 
+data_estim$bias <- data_estim$estim_value - data_estim$true_value
+data_estim_geh <- data_estim
+data_t1_emp <- subset(data_estim, para %in% c("beta", "eta"))
+
+data_t1_emp$model <- factor(data_t1_emp$model)
+data_t1_emp$para  <- factor(data_t1_emp$para)
+# works also with subset of data!
+level_cond <- c(paste0("mc_", c(1, 5, 10, 15)), paste0("ks_", c(1, 5, 10, 15)), paste0("iks_C", 1:4))
+data_t1_emp$cond  <- factor(data_t1_emp$cond, levels = level_cond[which(level_cond %in% levels(factor(data_t1_emp$cond)))])
+
+ag_t1_emp <- aggregate(bias ~ cond + model + para, data_t1_emp, mean, drop = FALSE) 
+ag_t1_emp_r <- ag_t1_emp
+ag_t1_emp_r$bias <- round(1000 * ag_t1_emp_r$bias, 2)
+
+t1_emp <- ftable(ag_t1_emp, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort ag_t1 to fit into ftable
+ag_t1_emp <- with(ag_t1_emp, ag_t1_emp[order(model, para, cond), ])
+
+t1_emp[] <- array(ag_t1_emp$bias, dim = dim(t1_emp))
+
+t1_r_emp_geh <- round(t1_emp*1000, 2)
+data_t1_emp_geh <- data_t1_emp
+@
+%Skala Gesundheitssorgen
+<<echo=FALSE, results=hide>>=
+#
+## load emp WS fitted models
+load("data/fitted_models_tKS_fpi_ges_3700_200_42.rda")
+#load("data/fitted_models_tKS_fpi_ges_10000_200_42.rda")
+
+# remove estimates that did not converge
+#data_estim_raw <- data_estim
+not_converged_emp_err <- unique(data_estim[(!is.na(data_estim$converged) & data_estim$converged == FALSE), c("cond", "model", "N", "iterations", "set_num")])
+data_estim <- data_estim[data_estim$converged, ]
+
+# Table Bias 
+data_estim$bias <- data_estim$estim_value - data_estim$true_value
+data_estim_ges <- data_estim
+data_t1_emp <- subset(data_estim, para %in% c("beta", "eta"))
+
+data_t1_emp$model <- factor(data_t1_emp$model)
+data_t1_emp$para  <- factor(data_t1_emp$para)
+# works also with subset of data!
+level_cond <- c(paste0("mc_", c(1, 5, 10, 15)), paste0("ks_", c(1, 5, 10, 15)), paste0("iks_C", 1:4))
+data_t1_emp$cond  <- factor(data_t1_emp$cond, levels = level_cond[which(level_cond %in% levels(factor(data_t1_emp$cond)))])
+
+ag_t1_emp <- aggregate(bias ~ cond + model + para, data_t1_emp, mean, drop = FALSE) 
+ag_t1_emp_r <- ag_t1_emp
+ag_t1_emp_r$bias <- round(1000 * ag_t1_emp_r$bias, 2)
+
+t1_emp <- ftable(ag_t1_emp, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort ag_t1 to fit into ftable
+ag_t1_emp <- with(ag_t1_emp, ag_t1_emp[order(model, para, cond), ])
+
+t1_emp[] <- array(ag_t1_emp$bias, dim = dim(t1_emp))
+
+t1_r_emp_ges <- round(t1_emp*1000, 2)
+data_t1_emp_ges <- data_t1_emp
+@
+
+<<echo=FALSE, results=hide>>=
+# Table Bias mu
+
+data_t2_emp <- subset(data_estim_err, para %in% c("mu0", "mu1") & model == "MissBLIM")
+
+data_t2_emp$model <- factor(data_t2_emp$model)
+data_t2_emp$para  <- factor(data_t2_emp$para)
+# works also with subset of data!
+level_cond <- c(paste0("mc_", c(1, 5, 10, 15)), paste0("ks_", c(1, 5, 10, 15)), paste0("iks_C", 1:4))
+data_t2_emp$cond  <- factor(data_t2_emp$cond, levels = level_cond[which(level_cond %in% levels(factor(data_t2_emp$cond)))])
+data_t2_emp$para  <- factor(data_t2_emp$para, levels = c("mu1", "mu0"))
+
+ag_t2_emp <- aggregate(estim_value ~ cond + model + para, data_t2_emp, mean)
+ag_t2_r_emp <- ag_t2_emp
+ag_t2_r_emp$estim_value <- round(ag_t2_r_emp$estim_value, 4)
+
+t2_emp <- ftable(ag_t2_emp, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort ag_t1 to fit into ftable
+ag_t2_emp <- with(ag_t2_emp, ag_t2_emp[order(model, para, cond), ])
+
+t2_emp[] <- array(ag_t2_emp$estim_value, dim = dim(t2_emp))
+
+t2_r_emp <- round(t2_emp, 3)
+
+@
+
+% SD Skala Erregbarkeit
+<<echo=FALSE, results=hide>>=
+## SD Schaetzer (wie Tabelle 1 nur SD der Schaetzer, nicht mean)
+ag_sd1_emp <- aggregate(bias ~ cond + model + para, data_t1_emp_err, sd, drop = FALSE)
+ag_sd1_r_emp <- ag_sd1_emp
+ag_sd1_r_emp$bias <- round(ag_sd1_r_emp$bias, 4)
+
+sd1_emp <- ftable(ag_sd1_emp, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort ag_t1 to fit into ftable
+ag_sd1_emp <- with(ag_sd1_emp, ag_sd1_emp[order(model, para, cond), ])
+
+sd1_emp[] <- array(ag_sd1_emp$bias, dim = dim(sd1_emp))
+
+sd1_r_emp_err <- round(sd1_emp*1000, 2)
+
+@
+
+% SD Skala Gehemmtheit
+<<echo=FALSE, results=hide>>=
+## SD Schaetzer (wie Tabelle 1 nur SD der Schaetzer, nicht mean)
+ag_sd1_emp <- aggregate(bias ~ cond + model + para, data_t1_emp_geh, sd, drop = FALSE)
+ag_sd1_r_emp <- ag_sd1_emp
+ag_sd1_r_emp$bias <- round(ag_sd1_r_emp$bias, 4)
+
+sd1_emp <- ftable(ag_sd1_emp, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort ag_t1 to fit into ftable
+ag_sd1_emp <- with(ag_sd1_emp, ag_sd1_emp[order(model, para, cond), ])
+
+sd1_emp[] <- array(ag_sd1_emp$bias, dim = dim(sd1_emp))
+
+sd1_r_emp_geh <- round(sd1_emp*1000, 2)
+
+@
+
+% SD Skala Gesundheitssorgen
+<<echo=FALSE, results=hide>>=
+## SD Schaetzer (wie Tabelle 1 nur SD der Schaetzer, nicht mean)
+ag_sd1_emp <- aggregate(bias ~ cond + model + para, data_t1_emp_ges, sd, drop = FALSE)
+ag_sd1_r_emp <- ag_sd1_emp
+ag_sd1_r_emp$bias <- round(ag_sd1_r_emp$bias, 4)
+
+sd1_emp <- ftable(ag_sd1_emp, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort ag_t1 to fit into ftable
+ag_sd1_emp <- with(ag_sd1_emp, ag_sd1_emp[order(model, para, cond), ])
+
+sd1_emp[] <- array(ag_sd1_emp$bias, dim = dim(sd1_emp))
+
+sd1_r_emp_ges <- round(sd1_emp*1000, 2)
+
+@
+
+
+%% Abbildungen alle drei emp. WS zusammen für die vier Modelle getrennt
+% BLIM_COMP
+Für das BLIM\textsubscript{COMP} zeigen sich bei kleinem Anteil fehlender Daten (1-5\%) sehr kleine Verzerrungen und kleine Streuungen (vgl. Abbildung \ref{fig:blim_comp_bias_emp}). Mit steigendem Anteil der fehlenden Daten nimmt diese Streuung und Verzerrung jedoch bei allen Dezimierungsmechanismen zu, was anhand der Abweichungen von der 1. Winkelhalbierenden und größeren Fehlerbalken zu erkennen ist. Diese Tendenz scheint bei MCAR etwas stärker ausgeprägt als bei ks-MNAR und iks-MNAR. 
+
+\begin{figure}[hbtp]
+\begin{center}
+<<echo=FALSE, results=hide>>=
+ag_plot_err <- aggregate(estim_value ~ cond + model + para_q + para, data_t1_emp_err, mean)
+ag_plot_err$SD <- aggregate(estim_value ~ cond + model + para_q + para, data_t1_emp_err, sd)[, 5]
+ag_plot_err$true_value <- aggregate(true_value ~ cond + model + para_q + para, data_t1_emp_err, max)[, 5]
+
+ag_plot_geh <- aggregate(estim_value ~ cond + model + para_q + para, data_t1_emp_geh, mean)
+ag_plot_geh$SD <- aggregate(estim_value ~ cond + model + para_q + para, data_t1_emp_geh, sd)[, 5]
+ag_plot_geh$true_value <- aggregate(true_value ~ cond + model + para_q + para, data_t1_emp_geh, max)[, 5]
+
+ag_plot_ges <- aggregate(estim_value ~ cond + model + para_q + para, data_t1_emp_ges, mean)
+ag_plot_ges$SD <- aggregate(estim_value ~ cond + model + para_q + para, data_t1_emp_ges, sd)[, 5]
+ag_plot_ges$true_value <- aggregate(true_value ~ cond + model + para_q + para, data_t1_emp_ges, max)[, 5]
+
+l.mat <- matrix(c(rep(c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12), each = 5)), 3, 20, byrow = TRUE)
+
+# BLIM_COMP
+pdf("plots/blim_comp_bias_emp.pdf", width = 5.5, height = 5.2, pointsize = 12, family = "CM Roman")
+par(mgp = c(1.3, .7, 0), mar = c(3.2, 2.5, .5, 0), oma = c(.5, 1, 2, 0.4))
+layout(l.mat[c(rep(1:3, each = 5)) , ])
+
+model <- "BLIM_COMP"
+cond <- c("mc_1", "mc_5", "ks_1", "ks_5", 
+          "mc_10", "mc_15", "ks_10", "ks_15", 
+          "iks_C1", "iks_C2", "iks_C3", "iks_C4")
+mu_q <-  c(.01,   .05,   0,    0, 
+           .10,   .15,   0,    0, 
+           .125,  .075, .03,  .005)
+mu_q_ <- c(.01,   .05,  .02,  .1, 
+           .10,   .15,  .2,   .3, 
+           .005,  .03,  .075, .125) 
+labels <- c(expression("mc"[1]), expression("mc"[5]), expression("ks"[1]), expression("ks"[5]),
+            expression("mc"[10]), expression("mc"[15]), expression("ks"[10]), expression("ks"[15]),
+            expression("iks"[c1]), expression("iks"[c2]), expression("iks"[c3]), expression("iks"[c4]))
+for(i in 1:12){
+plot(estim_value ~ true_value, 
+     ag_plot_err[ag_plot_err$cond  == cond[i] & 
+             ag_plot_err$model == model &
+             ag_plot_err$para  == "beta", ],
+     pch = 19, xlab = "", cex = .7,
+     ylab = "", ylim = c(0, .5), xlim = c(0, .5), col = "blue")
+
+with(ag_plot_err[ag_plot_err$cond  == cond[i] & 
+                 ag_plot_err$model == model &
+                 ag_plot_err$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "blue", lw = .6))
+  
+points(estim_value ~ true_value, 
+       ag_plot_geh[ag_plot_geh$cond  == cond[i] & 
+             ag_plot_geh$model == model &
+             ag_plot_geh$para  == "beta", ], cex = .7, pch = 19, col = "red")
+
+with(ag_plot_geh[ag_plot_geh$cond  == cond[i] & 
+                 ag_plot_geh$model == model &
+                 ag_plot_geh$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "red", lw = .6))
+  
+points(estim_value ~ true_value, 
+       ag_plot_ges[ag_plot_ges$cond  == cond[i] & 
+             ag_plot_ges$model == model &
+             ag_plot_ges$para  == "beta", ], cex = .7, pch = 19, col = "green3")
+
+with(ag_plot_ges[ag_plot_ges$cond  == cond[i] & 
+                 ag_plot_ges$model == model &
+                 ag_plot_ges$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "green3", lw = .6))
+  
+abline(a = 0, b = 1, lw = 0.5)
+
+mtext(labels[i], 3, cex = .75, padj = -.2)
+}
+
+par(xpd = NA)
+segments(-2.2, 0.62, x1 = 0.52, y1 = 0.62, lty = 2)
+segments(-.87, 0.62, x1 = -.87, y1 = 2.1, lty = 2)
+legend(x = -1.7, y = 2.23, legend = c("Erregbarkeit", "Gehemmtheit", "Gesundheitssorgen"), pch = c(19, 19, 19), col = c("blue", "red", "green3"), horiz = T, bty = "n")
+par(xpd = FALSE)
+
+mtext("Wahrer Parameterwert", 1, outer = T, padj = -0.9)
+mtext("Parameterschätzung", 2, outer = T, padj = 0.7)
+
+dev.off()
+@
+\includegraphics[width=.99\textwidth]{plots/blim_comp_bias_emp}
+\end{center}
+\caption[$\beta$-Parameterschätzung des BLIM\textsubscript{COMP} für die emp. Wissensstrukturen $(N = 3700)$]{Mittlere $\beta$-Parameterschätzung des BLIM\textsubscript{COMP} in Abhängigkeit des wahren Parameterwertes für jedes der 12 Items der drei empirischen Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$. Die durchgehende Linie zeigt die 1. Winkelhalbierende und die Standardabweichung ist als Fehlerbalken eingezeichnet.}
+\label{fig:blim_comp_bias_emp}
+\end{figure}
+
+%BLIM_MAW
+Das BLIM\textsubscript{MAW} zeigt tendenziell die zu erwartenden theoretischen Verzerrungen (vgl. Abbildung \ref{fig:blim_maw_bias_emp}). Dies gilt jedoch nicht, wenn der wahre Parameterwert 0 beträgt, da dann die Schätzung ebenfalls immer sehr nahe an 0 liegt und nicht die theoretisch zu erwartende Verzerrung auftritt. Wie schon beim BLIM\textsubscript{COMP} gilt, dass die Streuung mit steigendem Anteil fehlender Daten tendenziell ansteigt. 
+
+\begin{figure}[hbtp]
+\begin{center}
+<<echo=FALSE, results=hide>>=
+
+# BLIM_MAW
+pdf("plots/blim_maw_bias_emp.pdf", width = 5.5, height = 5.2, pointsize = 12, family = "CM Roman")
+par(mgp = c(1.3, .7, 0), mar = c(3.2, 2.5, .5, 0), oma = c(.5, 1, 2, 0.4))
+layout(l.mat[c(rep(1:3, each = 5)) , ])
+
+model <- "BLIM_MAW"
+cond <- c("mc_1", "mc_5", "ks_1", "ks_5", 
+          "mc_10", "mc_15", "ks_10", "ks_15", 
+          "iks_C1", "iks_C2", "iks_C3", "iks_C4")
+mu_q <-  c(.01,   .05,   0,    0, 
+           .10,   .15,   0,    0, 
+           .125,  .075, .03,  .005)
+mu_q_ <- c(.01,   .05,  .02,  .1, 
+           .10,   .15,  .2,   .3, 
+           .005,  .03,  .075, .125) 
+labels <- c(expression("mc"[1]), expression("mc"[5]), expression("ks"[1]), expression("ks"[5]),
+            expression("mc"[10]), expression("mc"[15]), expression("ks"[10]), expression("ks"[15]),
+            expression("iks"[c1]), expression("iks"[c2]), expression("iks"[c3]), expression("iks"[c4]))
+for(i in 1:12){
+plot(estim_value ~ true_value, 
+     ag_plot_err[ag_plot_err$cond  == cond[i] & 
+             ag_plot_err$model == model &
+             ag_plot_err$para  == "beta", ],
+     pch = 19, xlab = "", cex = .7,
+     ylab = "", ylim = c(0, .6), xlim = c(0, .5), col = "blue")
+
+with(ag_plot_err[ag_plot_err$cond  == cond[i] & 
+                 ag_plot_err$model == model &
+                 ag_plot_err$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "blue", lw = .6))
+  
+points(estim_value ~ true_value, 
+       ag_plot_geh[ag_plot_geh$cond  == cond[i] & 
+             ag_plot_geh$model == model &
+             ag_plot_geh$para  == "beta", ], cex = .7, pch = 19, col = "red")
+
+with(ag_plot_geh[ag_plot_geh$cond  == cond[i] & 
+                 ag_plot_geh$model == model &
+                 ag_plot_geh$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "red", lw = .6))
+  
+points(estim_value ~ true_value, 
+       ag_plot_ges[ag_plot_ges$cond  == cond[i] & 
+             ag_plot_ges$model == model &
+             ag_plot_ges$para  == "beta", ], cex = .7, pch = 19, col = "green3")
+
+with(ag_plot_ges[ag_plot_ges$cond  == cond[i] & 
+                 ag_plot_ges$model == model &
+                 ag_plot_ges$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "green3", lw = .6))
+  
+abline(a = 0, b = 1, lw = 0.5)
+abline(a = mu_q[i], b = (1 - mu_q[i]), lty = 2, lw = .5)
+
+mtext(labels[i], 3, cex = .75, padj = -.2)
+}
+
+par(xpd = NA)
+segments(-2.2, 0.75, x1 = 0.52, y1 = 0.75, lty = 2)
+segments(-.87, 0.75, x1 = -.87, y1 = 2.4, lty = 2)
+legend(x = -1.7, y = 2.68, legend = c("Erregbarkeit", "Gehemmtheit", "Gesundheitssorgen"), pch = c(19, 19, 19), col = c("blue", "red", "green3"), horiz = T, bty = "n")
+par(xpd = FALSE)
+
+mtext("Wahrer Parameterwert", 1, outer = T, padj = -0.9)
+mtext("Parameterschätzung", 2, outer = T, padj = 0.7)
+
+dev.off()
+@
+\includegraphics[width=.99\textwidth]{plots/blim_maw_bias_emp}
+\end{center}
+\caption[$\beta$-Parameterschätzung des BLIM\textsubscript{MAW} für die emp. Wissensstrukturen $(N = 3700)$]{Mittlere $\beta$-Parameterschätzung des BLIM\textsubscript{MAW} in Abhängigkeit des wahren Parameterwertes für jedes der 12 Items der drei empirischen Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$. Die durchgehende Linie zeigt die 1. Winkelhalbierende und die gestrichelte die theoretisch zu erwartende Verzerrung. Die Standardabweichung ist als Fehlerbalken eingezeichnet.}
+\label{fig:blim_maw_bias_emp}
+\end{figure}
+
+%IMBLIM
+Beim IMBLIM zeigen sich generell geringere Verzerrungen, die Abweichungen in Abbildung \ref{fig:imblim_bias_emp} von der 1. Winkelhalbierenden sind geringer. Dieses Verhalten zeigt sich tendenziell über alle Dezimierungsmechanismen hinweg. Außerdem weist das IMBLIM hier eine geringere Verzerrungsanfälligkeit bei steigendem Anteil fehlender Daten auf und die Streuungen sind ebenfalls geringer.
+
+\begin{figure}[hbtp]
+\begin{center}
+<<echo=FALSE, results=hide>>=
+
+# BLIM_IMBLIM
+pdf("plots/imblim_bias_emp.pdf", width = 5.5, height = 5.2, pointsize = 12, family = "CM Roman")
+par(mgp = c(1.3, .7, 0), mar = c(3.2, 2.5, .5, 0), oma = c(.5, 1, 2, 0.4))
+layout(l.mat[c(rep(1:3, each = 5)) , ])
+
+model <- "IMBLIM"
+cond <- c("mc_1", "mc_5", "ks_1", "ks_5", 
+          "mc_10", "mc_15", "ks_10", "ks_15", 
+          "iks_C1", "iks_C2", "iks_C3", "iks_C4")
+mu_q <-  c(.01,   .05,   0,    0, 
+           .10,   .15,   0,    0, 
+           .125,  .075, .03,  .005)
+mu_q_ <- c(.01,   .05,  .02,  .1, 
+           .10,   .15,  .2,   .3, 
+           .005,  .03,  .075, .125) 
+labels <- c(expression("mc"[1]), expression("mc"[5]), expression("ks"[1]), expression("ks"[5]),
+            expression("mc"[10]), expression("mc"[15]), expression("ks"[10]), expression("ks"[15]),
+            expression("iks"[c1]), expression("iks"[c2]), expression("iks"[c3]), expression("iks"[c4]))
+for(i in 1:12){
+plot(estim_value ~ true_value, 
+     ag_plot_err[ag_plot_err$cond  == cond[i] & 
+             ag_plot_err$model == model &
+             ag_plot_err$para  == "beta", ],
+     pch = 19, xlab = "", cex = .7,
+     ylab = "", ylim = c(0, .5), xlim = c(0, .5), col = "blue")
+
+with(ag_plot_err[ag_plot_err$cond  == cond[i] & 
+                 ag_plot_err$model == model &
+                 ag_plot_err$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "blue", lw = .6))
+  
+points(estim_value ~ true_value, 
+       ag_plot_geh[ag_plot_geh$cond  == cond[i] & 
+             ag_plot_geh$model == model &
+             ag_plot_geh$para  == "beta", ], cex = .7, pch = 19, col = "red")
+
+with(ag_plot_geh[ag_plot_geh$cond  == cond[i] & 
+                 ag_plot_geh$model == model &
+                 ag_plot_geh$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "red", lw = .6))
+  
+points(estim_value ~ true_value, 
+       ag_plot_ges[ag_plot_ges$cond  == cond[i] & 
+             ag_plot_ges$model == model &
+             ag_plot_ges$para  == "beta", ], cex = .7, pch = 19, col = "green3")
+
+with(ag_plot_ges[ag_plot_ges$cond  == cond[i] & 
+                 ag_plot_ges$model == model &
+                 ag_plot_ges$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "green3", lw = .6))
+  
+abline(a = 0, b = 1, lw = 0.5)
+
+mtext(labels[i], 3, cex = .75, padj = -.2)
+}
+
+par(xpd = NA)
+segments(-2.2, 0.62, x1 = 0.52, y1 = 0.62, lty = 2)
+segments(-.87, 0.62, x1 = -.87, y1 = 2.1, lty = 2)
+legend(x = -1.7, y = 2.23, legend = c("Erregbarkeit", "Gehemmtheit", "Gesundheitssorgen"), pch = c(19, 19, 19), col = c("blue", "red", "green3"), horiz = T, bty = "n")
+par(xpd = FALSE)
+
+mtext("Wahrer Parameterwert", 1, outer = T, padj = -0.9)
+mtext("Parameterschätzung", 2, outer = T, padj = 0.7)
+
+dev.off()
+@
+\includegraphics[width=.99\textwidth]{plots/imblim_bias_emp}
+\end{center}
+\caption[$\beta$-Parameterschätzung des IMBLIM für die emp. Wissensstrukturen $(N = 3700)$]{Mittlere $\beta$-Parameterschätzung des IMBLIM in Abhängigkeit des wahren Parameterwertes für jedes der 12 Items der drei empirischen Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$. Die durchgehende Linie zeigt die 1. Winkelhalbierende und die Standardabweichung ist als Fehlerbalken eingezeichnet.}
+\label{fig:imblim_bias_emp}
+\end{figure}
+
+%MissBLIM
+Das MissBLIM schneidet noch etwas besser ab als das IMBLIM. Gerade bei höherem Anteil fehlender Daten sind die Streuungen geringer (vgl. Abbildung \ref{fig:missblim_bias_emp}). Dies zeigt sich exemplarisch gut für den ks-MNAR Fall mit einem Anteil fehlender Daten von 15\%: Hier ist Verzerrung und Streuung für das MissBLIM etwas geringer als für das IMBLIM. 
+
+\begin{figure}[hbtp]
+\begin{center}
+<<echo=FALSE, results=hide>>=
+
+# MissBLIM
+pdf("plots/missblim_bias_emp.pdf", width = 5.5, height = 5.2, pointsize = 12, family = "CM Roman")
+par(mgp = c(1.3, .7, 0), mar = c(3.2, 2.5, .5, 0), oma = c(.5, 1, 2, 0.4))
+layout(l.mat[c(rep(1:3, each = 5)) , ])
+
+model <- "MissBLIM"
+cond <- c("mc_1", "mc_5", "ks_1", "ks_5", 
+          "mc_10", "mc_15", "ks_10", "ks_15", 
+          "iks_C1", "iks_C2", "iks_C3", "iks_C4")
+mu_q <-  c(.01,   .05,   0,    0, 
+           .10,   .15,   0,    0, 
+           .125,  .075, .03,  .005)
+mu_q_ <- c(.01,   .05,  .02,  .1, 
+           .10,   .15,  .2,   .3, 
+           .005,  .03,  .075, .125) 
+labels <- c(expression("mc"[1]), expression("mc"[5]), expression("ks"[1]), expression("ks"[5]),
+            expression("mc"[10]), expression("mc"[15]), expression("ks"[10]), expression("ks"[15]),
+            expression("iks"[c1]), expression("iks"[c2]), expression("iks"[c3]), expression("iks"[c4]))
+for(i in 1:12){
+plot(estim_value ~ true_value, 
+     ag_plot_err[ag_plot_err$cond  == cond[i] & 
+             ag_plot_err$model == model &
+             ag_plot_err$para  == "beta", ],
+     pch = 19, xlab = "", cex = .7,
+     ylab = "", ylim = c(0, .5), xlim = c(0, .5), col = "blue")
+
+with(ag_plot_err[ag_plot_err$cond  == cond[i] & 
+                 ag_plot_err$model == model &
+                 ag_plot_err$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "blue", lw = .6))
+  
+points(estim_value ~ true_value, 
+       ag_plot_geh[ag_plot_geh$cond  == cond[i] & 
+             ag_plot_geh$model == model &
+             ag_plot_geh$para  == "beta", ], cex = .7, pch = 19, col = "red")
+
+with(ag_plot_geh[ag_plot_geh$cond  == cond[i] & 
+                 ag_plot_geh$model == model &
+                 ag_plot_geh$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "red", lw = .6))
+  
+points(estim_value ~ true_value, 
+       ag_plot_ges[ag_plot_ges$cond  == cond[i] & 
+             ag_plot_ges$model == model &
+             ag_plot_ges$para  == "beta", ], cex = .7, pch = 19, col = "green3")
+
+with(ag_plot_ges[ag_plot_ges$cond  == cond[i] & 
+                 ag_plot_ges$model == model &
+                 ag_plot_ges$para  == "beta", ],
+  arrows(true_value, estim_value - SD, true_value, estim_value + SD, 
+         angle = 90, length  = .01, code = 3, col = "green3", lw = .6))
+  
+abline(a = 0, b = 1, lw = 0.5)
+
+mtext(labels[i], 3, cex = .75, padj = -.2)
+}
+
+par(xpd = NA)
+segments(-2.2, 0.62, x1 = 0.52, y1 = 0.62, lty = 2)
+segments(-.87, 0.62, x1 = -.87, y1 = 2.1, lty = 2)
+legend(x = -1.7, y = 2.23, legend = c("Erregbarkeit", "Gehemmtheit", "Gesundheitssorgen"), pch = c(19, 19, 19), col = c("blue", "red", "green3"), horiz = T, bty = "n")
+par(xpd = FALSE)
+
+mtext("Wahrer Parameterwert", 1, outer = T, padj = -0.9)
+mtext("Parameterschätzung", 2, outer = T, padj = 0.7)
+
+dev.off()
+@
+\includegraphics[width=.99\textwidth]{plots/missblim_bias_emp}
+\end{center}
+\caption[$\beta$-Parameterschätzung des MissBLIM für die emp. Wissensstrukturen $(N = 3700)$]{Mittlere $\beta$-Parameterschätzung des MissBLIM in Abhängigkeit des wahren Parameterwertes für jedes der 12 Items der drei empirischen Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$. Die durchgehende Linie zeigt die 1. Winkelhalbierende und die Standardabweichung ist als Fehlerbalken eingezeichnet.}
+\label{fig:missblim_bias_emp}
+\end{figure}
+
+
+%n emp (nicht in der finalen Version)
+<<echo=FALSE, results=hide>>=
+n_comp_emp <- aggregate(N ~ cond + model + para, data_t1_emp, mean, drop = FALSE)
+n1_emp <- ftable(n_comp_emp, row.vars=c("cond"), col.vars=c("model", "para"))
+#### sort n1 to fit into ftable
+n_comp_emp <- with(n_comp_emp, n_comp_emp[order(model, para, cond), ])
+
+n1_emp[] <- array(n_comp_emp$N, dim = dim(n1_emp))
+
+n1_r_emp <- round(n1_emp, 2)
+
+@
+
+\clearpage
+
+\subsubsection{Wiederherstellung des latenten Wissenszustandes}
+Neben der Genauigkeit der Parameterschätzung spielt vor allem die Wiederherstellung des latenten Wissenszustandes einer Person bei der Diagnostik eine wichtige Rolle. Für diese zeigten sich bei den empirischen Wsssensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$ ähnliche Ergebnisse wie schon bei der simulierten Wissensstruktur $\mathcal{K}_{s}$ mit generell jedoch größeren Distanzen relativ zu dem kleineren Anteil fehlender Daten. Wie Abbildung \ref{fig:m_dist_emp} zu entnehmen ist, schnitt über alle drei empirischen Wissensstrukturen das BLIM\textsubscript{MAW} bei der MCAR und iks-MNAR Bedingung am schlechtesten ab. Es zeigte sich hier eine starke Abhängigkeit der symmetrischen Distanz von den entsprechenden $\mu$- bzw. $\bar{\mu}$-Parametern. Das IMBLIM schnitt bei diesen Bedingungen besser ab, zeigte aber in der ks-MNAR Bedingung größere Distanzen mit steigendem Anteil fehlender Daten. Das MissBLIM wies grundsätzlich mit die niedrigsten Distanzen auf, wurde jedoch in manchen Fällen gerade bei höherem Anteil fehlender Daten vom BLIM\textsubscript{COMP} übertroffen. Dies zeigte sich vor allem in der MCAR Bedingung. Auffällig war außerdem, dass in der ks-MNAR Bedingung die mittlere symmetrische Distanz mit steigenden $\bar{\mu}$-Parametern für IMBLIM und MissBLIM sich unabhängig von der betrachteten Wissensstruktur zu verbessern schien. Beim BLIM\textsubscript{COMP} war das für die Skalen Gehemmtheit und Gesundheitssorgen ebenso der Fall, zeigte sich bei der Skala Erregbarkeit jedoch eher umgekehrt.
+
+
+<<echo=FALSE, results=hide>>=
+### assesment accuracy Erregbarkeit
+
+### data_t1 --> data_t1_emp
+ag_asses_emp <- aggregate(mean_dist ~ cond + model, data_t1_emp_err, mean)
+ag_asses_emp$SD <- aggregate(mean_dist ~ cond + model, data_t1_emp, sd)[, 3]
+mat_dist_emp_err <- matrix(ag_asses_emp$mean_dist, nrow = 12, ncol = 4, byrow = F, dimnames = list(c("mc_1", "mc_5", "mc_10", "mc_15", "ks_1", "ks_5", "ks_10", "ks_15", "iks_c1", "iks_c2", "iks_c3", "iks_c4"), c("BLIM_comp", "BLIM_maw", "IMBLIM", "MissBLIM")))
+
+mat_dist_sd_emp_err <- matrix(ag_asses_emp$SD, nrow = 12, ncol = 4, byrow = F, dimnames = list(c("mc_1", "mc_5", "mc_10", "mc_15", "ks_1", "ks_5", "ks_10", "ks_15", "iks_c1", "iks_c2", "iks_c3", "iks_c4"), c("BLIM_comp", "BLIM_maw", "IMBLIM", "MissBLIM")))
+
+### assesment accuracy Gehemmtheit
+
+### data_t1 --> data_t1_emp
+ag_asses_emp <- aggregate(mean_dist ~ cond + model, data_t1_emp_geh, mean)
+ag_asses_emp$SD <- aggregate(mean_dist ~ cond + model, data_t1_emp, sd)[, 3]
+mat_dist_emp_geh <- matrix(ag_asses_emp$mean_dist, nrow = 12, ncol = 4, byrow = F, dimnames = list(c("mc_1", "mc_5", "mc_10", "mc_15", "ks_1", "ks_5", "ks_10", "ks_15", "iks_c1", "iks_c2", "iks_c3", "iks_c4"), c("BLIM_comp", "BLIM_maw", "IMBLIM", "MissBLIM")))
+
+mat_dist_sd_emp_geh <- matrix(ag_asses_emp$SD, nrow = 12, ncol = 4, byrow = F, dimnames = list(c("mc_1", "mc_5", "mc_10", "mc_15", "ks_1", "ks_5", "ks_10", "ks_15", "iks_c1", "iks_c2", "iks_c3", "iks_c4"), c("BLIM_comp", "BLIM_maw", "IMBLIM", "MissBLIM")))
+
+### assesment accuracy Gesundheitssorgen
+
+### data_t1 --> data_t1_emp
+ag_asses_emp <- aggregate(mean_dist ~ cond + model, data_t1_emp_ges, mean)
+ag_asses_emp$SD <- aggregate(mean_dist ~ cond + model, data_t1_emp, sd)[, 3]
+mat_dist_emp_ges <- matrix(ag_asses_emp$mean_dist, nrow = 12, ncol = 4, byrow = F, dimnames = list(c("mc_1", "mc_5", "mc_10", "mc_15", "ks_1", "ks_5", "ks_10", "ks_15", "iks_c1", "iks_c2", "iks_c3", "iks_c4"), c("BLIM_comp", "BLIM_maw", "IMBLIM", "MissBLIM")))
+
+mat_dist_sd_emp_ges <- matrix(ag_asses_emp$SD, nrow = 12, ncol = 4, byrow = F, dimnames = list(c("mc_1", "mc_5", "mc_10", "mc_15", "ks_1", "ks_5", "ks_10", "ks_15", "iks_c1", "iks_c2", "iks_c3", "iks_c4"), c("BLIM_comp", "BLIM_maw", "IMBLIM", "MissBLIM")))
+
+@
+
+%alle Skalen in einer Abbildung
+\begin{figure}[hbtp]
+\begin{center}
+<<echo=FALSE, results=hide>>=
+pdf("plots/m_dist_emp.pdf", width = 5.5, height = 5.6, pointsize = 12, family="CM Roman")
+par(mfrow = c(3, 1), mar = c(2, 3, .1, .01), mgp = c(2, .5, 0), oma = c(1.2, 1, 3, 0.4))
+# Erregbarkeit
+bar <- barplot(t(mat_dist_emp_err), beside = T, col = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF"), 
+        axes = F, cex.names = .7, border = NA,
+       ylab = "", ylim = c(0, 1.4), xlab = "",
+       names.arg = c(expression("mc"[1]), expression("mc"[5]), expression("mc"[10]), expression("mc"[15]),
+                     expression("ks"[1]), expression("ks"[5]), expression("ks"[10]), expression("ks"[15]),
+                     expression("iks"[c1]), expression("iks"[c2]), expression("iks"[c3]), expression("iks"[c4])),
+       legend.text	= TRUE, args.legend=list(legend = c(expression("BLIM"[COMP]), expression("BLIM"[MAW]), "IMBLIM", "MissBLIM"), 
+                                            x = "topleft", bty = "n", horiz = TRUE, inset = c(0, -0.2), cex = 1.4, xpd = NA))
+arrows(bar, t(mat_dist_emp_err) - t(mat_dist_sd_emp_err), bar, t(mat_dist_emp_err) + t(mat_dist_sd_emp_err), angle = 90, code = 3, length = .01, col = "gray18")
+par(xpd = FALSE)
+abline(v = 20.5, lty = 2)
+abline(v = 40.5, lty = 2)
+axis(2)
+text(bar[length(bar) - 1] - 1, 1.25, "Erregbarkeit")
+box()
+
+# Gehemmtheit
+bar <- barplot(t(mat_dist_emp_geh), beside = T, col = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF"), 
+        axes = F, cex.names = .7, border = NA,
+       ylab = "", ylim = c(0, 1.4), xlab = "",
+       names.arg = c(expression("mc"[1]), expression("mc"[5]), expression("mc"[10]), expression("mc"[15]),
+                     expression("ks"[1]), expression("ks"[5]), expression("ks"[10]), expression("ks"[15]),
+                     expression("iks"[c1]), expression("iks"[c2]), expression("iks"[c3]), expression("iks"[c4])),
+       legend.text	= FALSE, args.legend=list(legend = c(expression("BLIM"[COMP]), expression("BLIM"[MAW]), "IMBLIM", "MissBLIM"), x = "topleft", bty = "n"))
+arrows(bar, t(mat_dist_emp_geh) - t(mat_dist_sd_emp_geh), bar, t(mat_dist_emp_geh) + t(mat_dist_sd_emp_geh), angle = 90, code = 3, length = .01, col = "gray18")
+abline(v = 20.5, lty = 2)
+abline(v = 40.5, lty = 2)
+axis(2)
+text(bar[length(bar) - 1] - 1.2, 1.25, "Gehemmtheit")
+box()
+
+# Gesundheitssorgen
+bar <- barplot(t(mat_dist_emp_ges), beside = T, col = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF"), 
+        axes = F, cex.names = .7, border = NA,
+       ylab = "", ylim = c(0, 1.4), xlab = "",
+       names.arg = c(expression("mc"[1]), expression("mc"[5]), expression("mc"[10]), expression("mc"[15]),
+                     expression("ks"[1]), expression("ks"[5]), expression("ks"[10]), expression("ks"[15]),
+                     expression("iks"[c1]), expression("iks"[c2]), expression("iks"[c3]), expression("iks"[c4])),
+       legend.text	= FALSE, args.legend=list(legend = c(expression("BLIM"[COMP]), expression("BLIM"[MAW]), "IMBLIM", "MissBLIM"), x = "topleft", bty = "n", horiz = TRUE))
+arrows(bar, t(mat_dist_emp_ges) - t(mat_dist_sd_emp_ges), bar, t(mat_dist_emp_ges) + t(mat_dist_sd_emp_ges), angle = 90, code = 3, length = .01, col = "gray18")
+abline(v = 20.5, lty = 2)
+abline(v = 40.5, lty = 2)
+axis(2)
+text(bar[length(bar) - 1] - 2.9, 1.25, "Gesundheitssorgen")
+box()
+
+mtext("Dezimierungsmechanismus", 1, outer = T, padj = 0)
+mtext("Mittlere symmetrische Distanz", 2, outer = T, padj = 0.7)
+
+dev.off()
+@
+\includegraphics[width=.99\textwidth]{plots/m_dist_emp}
+\end{center}
+\caption[Mittlere symmetrische Distanzen für die emp. Wissensstrukturen.]{Mittlere symmetrische Distanz in Abhängigkeit des Modells und Dezimierungsmechanismus basierend auf den Skalen Erregbarkeit, Gehemmtheit und Gesundheitssorgen bzw. den unterliegenden Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$ für eine simulierte Stichprobengröße mit $N = 3700$.}
+\label{fig:m_dist_emp}
+\end{figure}
+
+
+
+
+
+\newpage
+
+
+
+%%%%%%%%%%%%%% DISKUSSION %%%%%%%%%%%%%%%%
+\section{Diskussion}
+
+
+% Unterschiede Padua
+\paragraph{Unterschiede zu \citet{DeChiusole2015}.}
+Für die Verzerrungen basierend auf der simulierten Wissensstruktur $\mathcal{K}_s$ aus Tabelle \ref{tab:bias} zeigten sich im Vergleich zu den Befunden von \citet{DeChiusole2015} Unterschiede. Diese scheinen vor allem bei hohen $\mu$- und $\bar{\mu}$-Parametern größer auszufallen. Leider waren der Studie keine Schätzgleichungen für die Anpassung der Modelle zu entnehmen. Jedoch haben die Autoren freundlicherweise ihren MATLAB-Code für die Schätzung des MissBLIM zur Verfügung gestellt. Aus diesem Code konnten die entsprechenden expliziten Schätzgleichungen $\hat{\beta}_q^{Padua}$ und $\hat{\eta}_q^{Padua}$, die im EM-Algorithmus Verwendung fanden, rekonstruiert werden (vgl. Gleichungen \eqref{eq:beta_padua} und \eqref{eq:eta_padua}).
+
+\begin{equation}
+\label{eq:beta_padua}
+\hat{\beta}_q^{Padua} = \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot i_{q \in K \setminus (R \cup M)}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot i_{q \in K }}
+\end{equation}
+
+\begin{equation}
+\label{eq:eta_padua}
+\hat{\eta}_q^{Padua}  = \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot i_{q \in R \setminus K}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot i_{q \in Q \setminus K }}
+\end{equation}
+
+Verglichen mit den in Anhang A hergeleiteten ML-Schätzern für die $\beta$- und $\eta$-Parameter (Gleichungen \eqref{eq:beta} und \eqref{eq:eta}) zeigten sich hier Unterschiede im Nenner der Schätzgleichungen. In den ML-Schätzern der Originalstudie \citep{DeChiusole2015} wurde vermutlich die Häufigkeit $F(R, M, K)$ auch dann addiert, wenn die Aufgabe $q$ nicht beantwortet wurde, also $q \in M$ gilt. Dies scheint jedoch nicht korrekt, da die Häufigkeiten $F(R, M, K)$, für die gilt $q \in M$ nicht Teil der Summe im Nenner sein dürfen (vgl. Gleichungen \eqref{eq:beta} und \eqref{eq:eta}). Aufgrund dieser Unterschiede in den Schätzgleichungen ist anzunehmen, dass der Fehler für $\beta_q$ bzw. $\eta_q$ auch davon abhängt, wie oft gilt $i_{q \in K } \neq i_{q \in K \setminus M }$ bzw. $i_{q \in Q \setminus K } \neq i_{q \in Q \setminus (M \cup K)}$. Offensichtlich hängt das davon ab, wie wahrscheinlich eine Aufgabe $q \in K$ bzw. $q \not \in K$ nicht beantwortet wird, also $q \in M$ gilt. Dies beschreiben gerade die Parameter $\mu_q$ bzw. $\mu_{\bar{q}}$, die im Dezimierungsmechanismus verändert werden. Somit ist auch nachvollziehbar, weshalb bei Veränderung dieser Parameter die Unterschiede zwischen den ML-Schätzern in der Originalstudie und den hergeleiteten ML-Schätzern variieren. Genau diese Unterschiede finden sich auch bei der Verzerrung der Schätzungen, wenn man Tabelle \ref{tab:bias} dieser Arbeit mit Tabelle 1 von \citet{DeChiusole2015} vergleicht.
+
+% Modellvergleich
+\paragraph{Modellvergleich.}
+Der Vergleich der Modelle anhand der simulierten Wissensstruktur $\mathcal{K}_{s}$ und der empirischen Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$ basierend auf der Wiederherstellungsleistung der Parameter und des latenten Wissenszustandes zeigt, dass je nach Prozess, der die fehlenden Daten generiert, die Modelle unterschiedlich gut abschneiden. In diesem Zusammenhang schnitt das BLIM\textsubscript{MAW} am schlechtesten ab und zeigte die theoretisch zu erwartenden Verzerrungen in Abhängigkeit der $\mu$- und $\bar{\mu}$-Parameter (vgl. Gleichungen \eqref{eq:maw_bias_beta} und \eqref{eq:maw_bias_eta}). Es wies dadurch mit die höchsten Verzerrungen auf und auch deren Streuung war bei realistischem Anteil fehlender Daten unter 15\% mit am größten. Dies war unabhängig von der Stichprobengröße der Fall.
+Bei der Wiederherstellungsleistung des latenten Wissenszustands zeigte es außer in der ks-MNAR Bedingung, hier ist die MAW-Annahme am wenigsten verletzt, da gilt $\mu_q = 0$ für alle $q \in Q$, die größten mittleren symmetrischen Distanzen, welche stark vom Anteil fehlender Daten abhingen. 
+
+Das BLIM\textsubscript{COMP} mit ausschließlich den vollständigen Antwortmustern schnitt besser ab als das BLIM\textsubscript{MAW}. Dies liegt sehr wahrscheinlich daran, dass es keine Annahmen über den Prozess, der die fehlenden Daten generiert, macht, welche eventuell falsch sein könnten. Der Nachteil, der sich beim BLIM\textsubscript{COMP} jedoch gezeigt hat, ist die starke Abhängigkeit von der Stichprobengröße. Gerade bei hohem Anteil fehlender Daten nimmt die verbleibende Stichprobengröße rapide ab und es kommt dadurch zu teils großen Verzerrungen und Streuungen der Parameterschätzungen sowohl für $\beta$- als auch $\eta$-Parameter. Darüberhinaus ermöglicht es, wie schon das BLIM\textsubscript{MAW} keinerlei Aussagen über einen möglichen Prozess, der den fehlenden Daten zugrunde liegen könnte. Es geht also mögliche Information, die auch in den fehlenden Daten enthalten sein kann, verloren.
+
+Das IMBLIM wiederum ermöglicht es als erstes Modell die fehlenden Daten in die Schätzung der $\beta$- und $\eta$-Parameter mit einzubeziehen. Die Annahme, dass es eine über alle Aufgaben konstante Wahrscheinlichkeit gibt, mit der eine Antwort fehlt, egal ob die Aufgabe im Wissenszustand enthalten ist oder nicht, führt dazu, dass das IMBLIM die Parameter in der MCAR Bedingung sehr gut wiederherstellen kann. Auch ist hier die Streuung der Schätzung mit am geringsten, da in dieser Bedingung der Dezimierungsmechanismus genau der Annahme des IMBLIM entspricht. Für die ks-MNAR und iks-MNAR Bedingungen zeigt sich dann aber, dass eine Verzerrung auftritt, die mit steigendem Anteil fehlender Daten wächst. Ein ähnliches Muster zeigt sich dann auch bei der Wiederherstellungsleistung des latenten Wissenszustandes: Auch hier schneidet das IMBLIM im MCAR Fall sehr gut ab, weist aber gerade bei ks-MNAR und auch bei iks-MNAR größere mittlere symmetrische Distanzen, also eine ungenauere Herstellung des latenten Wissenszustandes auf.
+
+Über alle Bedingungen hinweg zeigte das MissBLIM die besten Leistungen. Die Annahmen über den fehlende Daten generierenden Prozess sind flexibler als die des IMBLIM und ermöglichen eine Abhängigkeit zwischen den fehlenden Antworten einer Person und deren unterliegendem Wissenszustand. Dies wird durch die zwei zusätzlichen Parameter $\mu_q$ und $\mu_{\bar{q}}$ für jede Aufgabe $q \in Q$ gewährleistet. $\mu_q$  ist dabei die Wahrscheinlichkeit, dass ein Item, welches im Wissenszustand $K$ der Person enthalten ist ($q \in K$), nicht beantwortet wird und $\mu_{\bar{q}}$ entspricht der Wahrscheinlichkeit, dass die Antwort einer Person auf Aufgabe $q$ fehlt, wenn diese nicht im Wissenszustand enthalten ist ($q \not \in K$). Sowohl bei der simulierten Wissensstruktur $\mathcal{K}_{s}$ ebenso wie bei den empirischen Wissensstrukturen $\mathcal{K}_{err}$, $\mathcal{K}_{geh}$ und $\mathcal{K}_{ges}$ hatte das MissBLIM tendenziell die geringsten Verzerrungen und kleinsten Streuungen, welche größtenteils unabhängig vom Dezimierungsmechanismus waren. Auch war es in der Lage die entsprechenden $\mu_q$ und $\mu_{\bar{q}}$ Parameter adäquat zu schätzen. Ein weiterer Vorteil gerade gegenüber dem BLIM\textsubscript{COMP} und BLIM\textsubscript{MAW} war die recht genaue Schätzung auch bei kleineren Stichprobengrößen. Auch hier zeigten sich keine systematischen Verzerrungen, einzig die Streuung war etwas größer in diesen Bereichen, aber immer noch am kleinsten verglichen mit den anderen Modellen. Nicht zuletzt war auch die Wiederherstellungsleistung des latenten Wissenszustandes für das MissBLIM sehr zufriedenstellend. Es musste sich zwar teilweise gegenüber dem BLIM\textsubscript{COMP} geschlagen geben, dieses hat aber den bereits erwähnten Nachteil, dass bei kleineren Stichproben die Schätzgenauigkeit stark leidet und für Personen mit fehlenden Antworten kein Wissenszustand $\hat{K}$ geschätzt werden kann. Einziger Nachteil des MissBLIM ist dagegen die größere Zahl der zu schätzenden Parameter und der damit einhergehende höhere Aufwand. Dieser Aufwand scheint aber gerechtfertigt, da durch ihn der Anteil verwertbarer Antwortmuster steigt. So müssen Datensätze mit fehlenden Antworten nicht ausgeschlossen werden, sondern deren Informationsgehalt kann mit in die Schätzung der Parameter einfließen und eine Schätzung des unterliegenden Wissenszustandes $\hat{K}$ ist möglich. Dies ist ein wünschenswertes Vorgehen, welches auch gerade gegenüber den Klienten, Patienten und im wissenschaftlichen Kontext gegenüber den Versuchspersonen angebracht ist um deren Mühen und Bereitschaft Information zu liefern angemessen zu würdigen.  
+\\
+   
+Diese Arbeit ermöglicht aufgrund der verwendeten Methodik eine eher theoretische Betrachtung der Modelle, welche zwar teils auf empirischen Wissensstrukturen aufbaut, die Anpassung der Modelle IMBLIM und MissBLIM selbst an empirische Datensätze jedoch nicht näher untersucht. In diesem Zusammenhang wäre daher eine Anpassung an einen empirischen Datensatz mit fehlenden Antworten, wie es \citet{DeChiusole2015} durchgeführt haben, zielführend. Gerade vor dem Hintergrund der gefundenen Unterschiede in den ML-Schätzgleichungen wären diese Ergebnisse von  Interesse. Hierbei wäre auch die Betrachtung verschiedener Ursachen fehlender Daten, z.B. Zeitbeschränkungen, bestimmte Instruktionen oder keinerlei Manipulation, und das entsprechende Abschneiden der Modelle in diesen Sitautionen spannend zu beobachten. Nicht zuletzt ist auch die Frage der Identifizierbarkeit für IMBLIM und MissBLIM nicht geklärt und es bleibt offen, inwieweit die zusätzlichen Parameter des MissBLIM hier ein Problem darstellen.  
+
+
+%%%%%%%%%%
+\newpage
+\bibliographystyle{apacite}
+\bibliography{bib_v2}
+
+\clearpage
+
+\appendix
+\renewcommand\thefigure{\thesection\arabic{figure}}    
+\renewcommand\thetable{\thesection\arabic{table}} 
+\setcounter{figure}{0} 
+\setcounter{table}{0}
+\include{parts/anhang_herleitung_ml}
+
+\clearpage
+\setcounter{figure}{0} 
+\setcounter{table}{0}
+%%% Items checken, mit Skala vergleichen !!!
+\include{parts/anhang_items_fpi} % Hr. Heller fragen, ob das mit veröffentlicht werden kann -> passt :)
+
+\clearpage
+\setcounter{figure}{0} 
+\setcounter{table}{0}
+\SweaveInput{parts/anhang_abbildungen_bias}
+
+\clearpage
+\setcounter{figure}{0} 
+\setcounter{table}{0}
+\SweaveInput{parts/anhang_abbildungen_bias_eta_n}
+
+\clearpage
+\setcounter{figure}{0} 
+\setcounter{table}{0}
+\SweaveInput{parts/anhang_tabellen_bias_streuung_emp}
+
+\clearpage
+\setcounter{figure}{0} 
+\setcounter{table}{0}
+\SweaveInput{parts/anhang_abbildungen_bias_emp_eta}
+\clearpage
+% data_t1_emp_err, data_t1_emp_geh und data_t1_emp_ges werden überschrieben mit emp. Daten für N = 10000. Weiterhin alles was darauf aufbaut.
+\SweaveInput{parts/anhang_abbildungen_bias_emp_beta_n10000}
+\clearpage
+\SweaveInput{parts/anhang_abbildungen_bias_emp_eta_n10000}
+
+
+
+% 
+\newpage
+\include{parts/selb_erkl}
+%%%%%%%%%%
+<<echo=FALSE, results=hide>>=
+# embed fonts in pdfs
+Sys.setenv(R_GSCMD = "C:/Program Files/gs/gs9.53.3/bin/gswin64c.exe")
+ps <- dir("plots", full.names = TRUE)
+for(p in ps){
+ embed_fonts(p)
+}
+@
+
+
+
+\end{document}
+

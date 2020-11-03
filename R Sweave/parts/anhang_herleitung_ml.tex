@@ -1,0 +1,148 @@
+\section{Herleitung ML-Schätzer}
+Herleitung der ML-Schätzer für das BLIM, IMBLIM und MissBLIM Modell.
+
+\noindent
+Für den M-Schritt des EM-Algorithmus ist eine ML-Schätzung der Parameter durchzuführen. Nachfolgend sollen die expliziten Schätzgleichungen für das IMBLIM und MissBLIM im Durchgang\footnote{Im Anhang wird auf eine Kennzeichnung des Durchgangs mit hochgestelltem $t$ verzichtet, alle Schätzungen beziehen sich jedoch auf den Durchgang $t$.} $t$ hergeleitet werden. $F(R, M, K)$ bezieht sich dabei auf die im E-Schritt berechneten erwarteten Häufigkeiten $\mathcal{E}(F(R, M, K))$ (vgl. Gleichung \eqref{eq:E_FRMK}). Die Parameterschätzungen des BLIM entsprechen aufgrund der Beziehung zwischen BLIM und IMBLIM denen des IMBLIM mit $M = \emptyset$.
+\subsection*{IMBLIM}
+Ausgehend von der Likelihood der vollständigen Daten \eqref{eq:LH_IMBLIM} wird die log-Likelihood gebildet:
+\begin{align*}
+\log \mathcal{L}(\mathcal{Q}_K \mid \beta, \eta, \pi) = {}&\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \log \big( P(M) \cdot P(\langle R, M \rangle^{*} \mid K, \beta, \eta) \big) \\
+												   & +  \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \log \pi_K \\
+												   = {}&\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \log P(M) \\
+												    & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \log  P(\langle R, M \rangle^{*} \mid K, \beta, \eta) \\
+												    & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \log \pi_K
+\end{align*}
+\noindent
+$\mathcal{Q}_K$ ist dabei die Menge aller theoretisch möglichen Tripel $\langle R, M, K \rangle$. $\mathcal{Q}$ bezeichne weiter die Menge aller beobachtbaren Paare $\langle R, M \rangle$.
+
+Für die ML-Schätzung muss diese log-Likelihood nun partiell nach den Parametern abgeleitet und 0 gesetzt werden. Hierzu ist hilfreich, dass  
+$$\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot \log  P(\langle R, M \rangle^{*} \mid K)$$ nur von $\beta$ und $\eta$ abhängt und $$\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}    F(R, M, K) \cdot \log\pi_K$$ nur von $\pi_K$. Somit fallen bei der partiellen Ableitung die jeweils anderen Summanden weg, da sie von dem abzuleitenden Parameter unabhängig sind.
+
+\subsubsection*{$\pi$-Parameter}
+Hier ist der Teil $\log \mathcal{L}_{\pi} = \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \log \pi_K$  unter der Nebenbedingung $\sum_{K \in \mathcal{K}} \pi_K \overset{!}{=} 1$ zu maximieren. Dies kann durch die Einführung eines Lagrange Multiplikators $\lambda$ erreicht werden:
+
+\begin{align*}
+\log \mathcal{L}_{\pi} = {}&\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \log \pi_K\\
+\log \mathcal{L}_{\pi}^{Lagrange} = {}&  \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}    F(R, M, K) \cdot \log \pi_K  + \lambda \cdot (1 - \sum_{K \in \mathcal{K}} \pi_K)\\
+\frac{\partial \log \mathcal{L}_{\pi}^{Lagrange}}{\partial \pi_K} = {}& \sum_{\langle R, M \rangle \in \mathcal{Q}} \frac{F(R, M, K)}{\pi_K} - \lambda \\
+\intertext{Nullsetzten und auflösen:} 
+\hat{\pi}_K = {}& \frac{1}{\lambda} \sum_{\langle R, M \rangle \in \mathcal{Q}} F(R, M, K)\\
+\intertext{Wegen} 
+1 = \sum_{K \in \mathcal{K}} \hat{\pi}_K = {}& \sum_{K \in \mathcal{K}}{ \frac{\sum_{\langle R, M \rangle \in \mathcal{Q}} F(R, M, K)}{\lambda}} = \frac{N}{\lambda} \\
+\intertext{erhält man dann}
+\hat{\pi}_K = {}& \frac{1}{N} \sum_{\langle R, M \rangle \in \mathcal{Q}} F(R, M, K)
+\end{align*}
+\noindent
+wobei $N = \sum_{\langle R, M \rangle \in \mathcal{Q}}  \sum_{K \in \mathcal{K}}  F(R, M, K) = \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) $ der Stichprobengröße entspricht.
+
+\subsubsection*{$\beta$-Parameter}
+Hierzu ist der von $\beta$ abhängige Teil der log-Likelihood $\log \mathcal{L}_{\beta}$ zu maximieren mit der bedingten Wahrscheinlichkeit $P(\langle R, M \rangle^{*} \mid K, \beta, \eta)$ wie in Gleichung \eqref{eq:PRMS.K} definiert.
+\begin{align*}
+\log \mathcal{L}_{\beta} = {}& \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}    F(R, M, K) \cdot \log  P(\langle R, M \rangle^{*} \mid K, \beta, \eta)  \\
+						 = {}& \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}    F(R, M, K) \cdot  \sum_{q \in K \setminus (R \cup M)} \log\beta_q  \\
+						   & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}    F(R, M, K) \cdot  \sum_{q \in (K \cap R) \setminus M} \log(1 - \beta_q)  \\
+						   & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}    F(R, M, K) \cdot \sum_{q \in R \setminus ( K \cup M)} \log\eta_q  \\
+						   & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}    F(R, M, K) \cdot \sum_{q \in Q \setminus ( R \cup M \cup K)} \log(1-\eta_q)  \\
+\frac{\partial \log \mathcal{L}_{\beta}}{\partial \beta_q} = {}&  \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot  \sum_{q \in K \setminus (R \cup M)} \frac{1}{\beta_q} \\
+						   & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}    F(R, M, K) \cdot  \sum_{q \in (K \cap R) \setminus M} \frac{1}{\beta_q - 1}  
+\end{align*}
+\noindent
+Einführung von zwei Indikatorvariablen nach dem Schema wie in Gleichung \eqref{eq:indikatorvariable}:
+\begin{align*} 
+i_{q \in K \setminus (R \cup M)} = {}&\begin{cases}
+1 & \text{,wenn}\quad q \in K \setminus (R \cup M)\\
+0 & \text{sonst}        
+\end{cases}\\
+i_{q \in (K \cap R) \setminus M} = {}& \begin{cases}
+1 & \text{,wenn}\quad q \in (K \cap R) \setminus M\\
+0 & \text{sonst}        
+\end{cases} 
+\end{align*}
+\noindent
+Daraus folgt:
+\begin{align*}  
+\frac{\partial \log \mathcal{L}_{\beta}}{\partial \beta_q} = {}&  \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot i_{q \in K \setminus (R \cup M)} \cdot \frac{1}{\beta_q}  \\
+						                                      & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot  i_{q \in (K \cap R) \setminus M} \cdot \frac{1}{\beta_q - 1} 
+\end{align*}
+\noindent
+Nullsetzen:
+\begin{align*} 
+0 = {}& \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot i_{q \in K \setminus (R \cup M)} \cdot \frac{1}{\hat{\beta}_q} \\
+	& + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot  i_{q \in (K \cap R) \setminus M} \cdot \frac{1}{\hat{\beta}_q - 1} \\
+0 = {}& (\hat{\beta}_q - 1) \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in K \setminus (R \cup M)} \\
+    & + \hat{\beta}_q \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot  i_{q \in (K \cap R) \setminus M}\\
+\hat{\beta}_q = {}& \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in K \setminus (R \cup M)}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot i_{q \in K \setminus (R \cup M)} + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot  i_{q \in (K \cap R) \setminus M}}\\
+= {}& \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot i_{q \in K \setminus (R \cup M)}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot \big(i_{q \in K \setminus (R \cup M)} +  i_{q \in (K \cap R) \setminus M}\big)}\\
+= {}& \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot i_{q \in K \setminus (R \cup M)}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in K \setminus M}}
+\end{align*}
+
+\subsubsection*{$\eta$-Parameter}
+Das Vorgehen ist aufgrund der sehr ähnlichen Struktur der Gleichung \eqref{eq:PRMS.K} für $\beta$ und $\eta$ äquivalent und führt zu folgender Schätzgleichung mit angepassten Indikatorvariablen $i_{q \in R \setminus ( K \cup M)}$ und $i_{q \in Q \setminus ( R \cup M \cup K)}$, welche sich aufgrund $R \cap M = \emptyset$ vereinfachen lassen:
+\begin{align*}
+\hat{\eta}_q = {}&\frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in R \setminus ( K \cup M)}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot \big(i_{q \in R \setminus ( K \cup M)} +  i_{q \in Q \setminus ( R \cup M \cup K)} \big)}\\
+= {}&\frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in R \setminus ( K \cup M)}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in Q \setminus (M \cup K)}}
+\end{align*}
+
+\clearpage
+
+\subsection*{MissBLIM}
+Wieder ausgehend von der Likelihood der vollständigen Daten \eqref{eq:LH_MissBLIM} diesmal des MissBLIM wird die log-Likelihood gebildet:
+
+\begin{align*}
+\log \mathcal{L}(\mathcal{Q}_K | \beta, \eta, \pi, \mu, \bar{\mu}) = {}&\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \log \big(P(\langle R, M \rangle^{*} \mid K, \beta, \eta)\\
+												& \cdot P(M\mid K, \mu, \bar{\mu})\big) \\
+												& +  \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}    F(R, M, K) \cdot \log \pi_K \\
+												= {}&\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot \log  P(\langle R, M \rangle^{*} \mid K, \beta, \eta) \\
+												& +\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \log P(M\mid K, \mu, \bar{\mu})  \\
+												& + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}    F(R, M, K) \cdot \log \pi_K
+\end{align*}
+
+Die Schätzer für $\beta$, $\eta$ und $\pi$ sind dabei äquivalent zu denen des IMBLIM, da der von ihnen abhängige Teil der Likelihood gleich ist. Hinzu kommen hier jedoch noch die
+ $\mu = (\mu_q)_{q \in Q}$ und $\bar{\mu} = (\mu_{\bar{q}})_{q \in Q}$ Parameter: $\mu_q$ als die Wahrscheinlichkeit, dass ein Item $q$, das im Wissenszustand $K$ enthalten ist, nicht beantwortet wird (weder richtig, noch falsch) und $\mu_{\bar{q}}$, die Wahrscheinlichkeit, dass ein Item, das sich nicht im Wissenszustand der Person befindet, nicht beantwortet wird. Für die ML-Schätzung dieser Parameter muss der von diesen abhängige Teil der Log-Likelihood maximiert werden.
+ 
+\subsubsection*{$\mu$- und $\bar{\mu}$-Parameter}
+Der von $\mu$ und $\bar{\mu}$ abhängige Teil der log-Likelihood lautet:
+
+$$\log \mathcal{L}_{\mu} = \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot \log P(M\mid K, \mu, \bar{\mu}) $$
+
+\noindent
+mit $P(M\mid K, \mu, \bar{\mu})$ wie in Gleichung \eqref{eq:PM.K} definiert. Für das einfachere Ableiten kann diese Gleichung umgeschrieben werden \citep[vgl.][]{DeChiusole2015}:
+$$ P(M\mid K, \mu, \bar{\mu}) = \left[ \prod_{q \in K \cap M} \mu_{q} \right ] \left[ \prod_{q \in K \setminus M} (1 - \mu_q) \right] \left[\prod_{q \in M \setminus K} \mu_{\bar{q}} \right] \left[\prod_{q \in Q \setminus (M \cup K)} (1 - \mu_{\bar{q}}) \right] $$
+
+\noindent
+Damit ergibt sich dann für die log-Likelihood und die Ableitung
+\begin{align*}
+\log \mathcal{L}_{\mu} = {}& \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \sum_{q \in K \cap M} \log \mu_q\\
+						 & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \sum_{q \in K \setminus M} \log(1 - \mu_q)\\
+						 & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \sum_{q \in M \setminus K} \log \mu_{\bar{q}}\\
+						 & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \sum_{q \in Q \setminus (M \cup K)} \log (1 - \mu_{\bar{q}})\\
+\frac{\partial \log \mathcal{L}_{\mu}} {\partial \mu_q}= {}& \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot \sum_{q \in K \cap M} \frac{1} {\mu_q}\\
+						 & + \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot \sum_{q \in K \setminus M} \frac{1}{\mu_q - 1}
+\end{align*}			
+
+Das weitere Vorgehen ist dann sehr ähnlich zu der $\beta$- bzw. $\eta$-Schätzung des IMBLIM, da die Gleichungen strukturell äquivalent sind. Es werden wieder zwei Indikatorvariablen zur Hilfe genommen:
+\begin{align*} 
+i_{q \in K \cap M} = {}&\begin{cases}
+1 & \text{,wenn}\quad q \in K \cap M\\
+0 & \text{sonst}        
+\end{cases}\\
+i_{q \in K \setminus M} = {}& \begin{cases}
+1 & \text{,wenn}\quad q \in K \setminus M\\
+0 & \text{sonst}        
+\end{cases} 
+\end{align*}
+
+\noindent
+Damit ergibt sich dann die ML-Schätzung für $\mu_q$:
+\begin{align*} 
+\hat{\mu}_q = {}& \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in K \cap M}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot \big( i_{q \in K \cap M} +  i_{q \in K \setminus M} \big)} \\
+= {} & \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot i_{q \in K \cap M}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot  i_{q \in K}}
+\end{align*} 
+
+und für $\mu_{\bar{q}}$:
+\begin{align*} 
+\hat{\mu}_{\bar{q}} = {}& \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in M \setminus K}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot \big( i_{q \in M \setminus K} +  i_{q \in Q \setminus (M \cup K)} \big)} \\
+= {} & \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K) \cdot i_{q \in M \setminus K}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot  i_{q \in Q \setminus K}}
+\end{align*}  
+
+

@@ -1,0 +1,11 @@
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}  lcccccc @{}} 
+	\toprule
+	  & \multicolumn{3}{c}{Fehlende Antworten} &   &   &   \\
+	\cmidrule{2-4} 
+	Skala & 0 & 1 & 2 & Antwortmuster & Schwelle $L$ \\
+	\midrule
+	Erregbarkeit        & 3691 & 48 & 1 & 1240 & 194 \\ 
+	Gehemmtheit        & 3679 & 57 & 4 & 1316 & 270 \\
+	Gesundheitssorgen  & 3706 & 34 & 0 & 1350 & 277 \\
+	\bottomrule
+\end{tabularx}

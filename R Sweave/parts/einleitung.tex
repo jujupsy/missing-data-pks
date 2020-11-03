@@ -1,0 +1,60 @@
+\section{Einleitung}
+Die Theorie der Wissensstrukturen \citep{Doignon1985} ist neben der klassischen Testtheorie und der Item-Response Theorie eine weitere Möglichkeit (psychologische) Tests im weitesten Sinne mathematisch zu beschreiben und so deren Eigenschaften und Aussagekraft theoretisch zu erfassen. Sie unterscheidet sich dabei radikal in der Herangehensweise: Es werden nicht aggregierte Daten über die Antworten einer Person hinweg betrachtet, sondern die einzelnen Antwortmuster der Personen bleiben komplett erhalten. Dies führt dazu, dass die Theorie der Wissensstrukturen eine mengentheoretische ist, da sie unter anderem mit den Mengen der richtig gelösten Aufgaben einer Person umgehen muss und diese nicht auf eine einzelne Zahl reduziert. In der vorliegenden Arbeit soll der Umgang mit fehlenden Daten in der Theorie der Wissensstrukturen näher betrachtet werden. Ausgangspunkt bildet die Arbeit von \citet{DeChiusole2015}, in welcher entsprechende Modelle hergeleitet wurden sowie deren Simulationsmethodik. Aufbauend darauf werden Eigenschaften der Schätzungen, Verzerrung und Streuung, sowie das Ausgangsmodell näher betrachtet.\\
+
+Nachfolgend ein kurzer Überblick über die Terminologie: Ausgangspunkt in der Theorie der Wissensstrukturen ist das Paar $\langle Q, \mathcal{K} \rangle$. $Q$ bezeichnet dabei den Wissensbereich, also eine nicht-leere und endliche Menge von zu lösenden Aufgaben $q \in Q$ (oft auch Items genannt) und $\mathcal{K}$ bezeichnet die sogenannte Wissensstruktur. Diese Struktur ist eine Teilmenge der Potenzmenge von $Q$ und beinhaltet alle Wissenszustände $K$ inklusive der Mengen $\emptyset$ und  $Q$. Die Wissenszustände $K$ beschreiben dabei alle möglichen Kombinationen von Aufgaben, die eine Person theoretisch beherrscht und die im Zusammenhang mit diesem Wissensgebiet vorkommen. Die Kardinalität der Wissensstruktur ist oft geringer als die der Potenzmenge von $Q$, $| \mathcal{K} | \leq 2^{|\mathcal{Q}|}\ $, da aufgrund logischer oder pädagogischer Abhängigkeiten zwischen den Aufgaben gewisse Teilmengen von $Q$ keine Wissenszustände darstellen. Beispielsweise wird eine Person, die in der Lage ist Differenzialgleichungen zu lösen keine Probleme damit haben eine einfache Addition vorzunehmen. Daher ist in einem Wissenszustand $K$, der die Aufgabe zur Differenzialgleichung enthält auch immer die Aufgabe zur einfachen Addition enthalten und somit wird die Menge der theoretisch möglichen Wissenszustände verkleinert. Diese Abhängigkeiten zwischen den Aufgaben können durch die sogenannte Precedence-Relation $\preccurlyeq$ auf $Q$, mit $a \preccurlyeq b$ gdw. \glqq $a$ eine Voraussetzung\footnote{Voraussetzung bedeutet hier: Wenn Aufgabe $b$ beherrscht wird, wird auch Aufgabe $a$ beherrscht, $b \in K \Rightarrow a \in K$} ist für $b$\grqq\ für alle $ a, b \in Q$, beschrieben werden \citep{Doignon1985}. 
+
+\section{Probabilistische Wissensstrukturen} 
+\label{probWS}
+Für eine realistischere Betrachtung des Lösungsverhaltens von Personen muss das Paar $\langle Q, \mathcal{K} \rangle$ erweitert werden. Es wird eine Wahrscheinlichkeitsverteilung $\pi = (\pi_K)_{K \in \mathcal{K}}$ auf den Wissenszuständen $K \in \mathcal{K}$ angenommen. $\pi_K$ entspricht der Wahrscheinlichkeit, dass eine zufällig ausgewählte Person sich im Wissenszustand $K$ befindet. Außerdem wird die Möglichkeit richtig zu raten und einen Flüchtigkeitsfehler zu begehen mit in die Theorie aufgenommen. Daher muss nun auch das Antwortmuster $R \subseteq Q$, die Menge der tatsächlich gelösten Aufgaben einer Versuchsperson von deren unterliegendem Wissenszustand $K$ unterschieden werden, da nicht mehr alle in $K$ enthaltenen Aufgaben gelöst bzw. nicht in $K$ enthaltenen Aufgaben nicht gelöst werden. Formal lassen sich die Fehler bei einer Aufgabe $q \in Q$ folgendermaßen beschreiben: richtig Raten $(q \in R \land q\not \in K)$ und ein Flüchtigkeitsfehler $(q \not \in R \land q \in K)$. Die Menge aller möglichen Antwortmuster $R$ wird als $\mathcal{R}$ bezeichnet und entspricht im Normalfall der Potenzmenge von $Q$. 
+Das darauf aufbauende gängigste Modell ist das \textit{Basic Local Independence Model} \citep[BLIM; ][]{Doignon1999}. Die namensgebende Annahme des Modells ist die der lokalen stochastischen Unabhängigkeit: Der Wissenszustand $K \in \mathcal{K}$ liefert eine vollständige Charakterisierung der unterliegenden Fähigkeiten, d.h. bei festem Wissenszustand $K$ ist das Antwortverhalten über alle Aufgaben $q \in Q$ unabhängig. Das Lösen oder nicht-Lösen einer Aufgabe hat somit bei festem Wissenszustand $K$ keinen Einfluss auf das Lösungsverhalten bei einer anderen Aufgabe. Außerdem wird angenommen, dass das Antwortverhalten für jede Aufgabe $q \in Q$  durch einen Parameter $\beta_q$ (Flüchtigkeitsfehler: Die Person löst die Aufgabe nicht, obwohl sie diese eigentlich beherrscht, $q \not\in R \land q \in K$) und einen Parameter $\eta_q$ (Richtig Raten: Person löst die Aufgabe, obwohl sie diese nicht beherrscht, $q \in R \land q \not\in K$) beschrieben wird. Dabei sind die Parametervektoren $\beta = (\beta_q)_{q \in Q}$ und $\eta = (\eta_q)_{q \in Q}$ unabhängig von den Wissenszuständen in $\mathcal{K}$, was bedeutet, dass die Wahrscheinlichkeit für einen der beiden Fehler bei einer Aufgabe $q \in Q$ in jedem Wissenszustand $K$ gleich ist. Diese Annahme wird dadurch gerechtfertigt, dass sich ohne sie die Anzahl der Parameter deutlich vergrößern würde \citep{Doignon1999}.
+
+Ausgehend von $P(R, K)$, der gemeinsamen Wahrscheinlichkeit des Antwortmusters $R$ und des Wissenszustands $K$, lassen sich die Randverteilung $\pi_K$ und die bedingte Wahrscheinlichkeit $P(R \mid K)$ betrachten. Dabei besteht für alle $R \in \mathcal{R}$ und $K \in \mathcal{K}$ der Zusammenhang 
+$$P(R, K) = P(R \mid K) \cdot \pi_K$$
+
+Aufgrund der obigen Annahmen ergibt sich dann folgende Charakterisierung der bedingten Wahrscheinlichkeit des Antwortmusters $R$ gegeben des latenten Wissenszustands $K$ der Person. Diese wird auch als sog. \glqq Antwortregel\grqq\ des BLIM bezeichnet: 
+
+\begin{equation}
+\label{eq:antwortregel}
+P(R \mid K) = \prod\limits_{q \in Q} p_q, \,\, p_q = \begin{cases}
+ \beta_q     & q \not\in R, q     \in K \\
+ 1 - \beta_q & q     \in R, q     \in K \\
+ \eta_q      & q     \in R, q \not\in K \\
+ 1 - \eta_q  & q \not\in R, q \not\in K
+\end{cases} 
+\end{equation}
+\noindent
+mit $\beta_q$ der Wahrscheinlichkeit bei Aufgabe $q \in Q$ einen Flüchtigkeitsfehler zu begehen und $\eta_q$ der Wahrscheinlichkeit richtig zu Raten.
+
+
+Für die Wahrscheinlichkeit $P(R)$ eines Antwortmusters $R \in \mathcal{R}$ gilt dann aufgrund des Gesetzes der totalen Wahrscheinlichkeit:
+$$P(R) = \sum\limits_{K \in \mathcal{K}} P(R \mid K) \cdot \pi_K$$
+
+\subsection{BLIM: Parameter und deren Schätzung}
+Die zu schätzenden freien Parameter des BLIM sind einmal die Wahrscheinlichkeiten $\pi_K$ für alle $K \in \mathcal{K}$ sowie die Fehlerwahrscheinlichkeiten $\beta_q$ und $\eta_q$ für alle $q \in Q$. Es ergeben sich somit aufgrund $\sum_{K \in \mathcal{K}} \pi_K \overset{!}{=} 1$  insgesamt $|\mathcal{K}| - 1$ freie zu schätzende Wahrscheinlichkeiten $\hat{\pi}_K$ und je $|Q|$ zu schätzende Fehlerwahrscheinlichkeiten $\hat{\beta_q}$ und $\hat{\eta_q}$. Demgegenüber stehen $2^{|Q|} - 1$ unabhängig beobachtbare Häufigkeiten $N_R$ für die Antwortmuster $R \in \mathcal{R}$.
+
+\subsubsection{ML-Schätzung mit EM-Algorithmus}
+\label{EM-BLIM}
+Da das BLIM äquivalent zu einem restriktiven Latent-Class Modell ist mit den Wissenszuständen $K \in \mathcal{K}$ als den latenten Klassen \citep{Unlu2011, Schrepp2005}, kann auch hier der sog. EM-Algorithmus \citep{Dempster1977} eingesetzt werden um die Parameter des Modells zu schätzen \citep[vgl. ][]{Stefanutti2009}.
+Hierbei wird angenommen, dass neben den Antwortmustern $R$ auch noch der latente Wissenszustand $K$ einer Person beobachtet werden kann. Mit diesen Datenpaaren $(R, K)$, deren absoluten Häufigkeiten $F(R, K)$ und $D$ als der Menge aller Paare $(R, K)$ wird anschließend die Likelihood der vollständigen Daten bestimmt:
+$$ \mathcal{L}(D \mid \beta, \eta, \pi) = \prod_{R \in \mathcal{R}} \prod_{K \in \mathcal{K}} P(R, K \mid \beta, \eta, \pi)^{F(R, K)}$$
+ 
+Dann werden die folgenden zwei Schritte iterativ in jedem Durchgang $t$ wiederholt, bis der Algorithmus gegen einen Wert konvergiert und/oder ein bestimmtes Abbruchkriterium erreicht wird:
+\begin{itemize}
+\item \textbf{Expectation:}  Der Erwartungswert der absoluten (nicht-beobachtbaren) Häufigkeiten $F(R, K)$ wird auf Basis der im vorherigen M-Schritt geschätzten Parameter $\hat{\beta}^{(t-1)}$, $\hat{\eta}^{(t-1)}$ und $\hat{\pi}^{(t-1)}$ berechnet:
+$$\mathcal{E}(F(R, K)) = N_R \cdot P(K \mid R, \hat{\beta}^{(t-1)}, \hat{\eta}^{(t-1)}, \hat{\pi}^{(t-1)})$$
+
+\item \textbf{Maximization:}  Mit $F(R, K) = \mathcal{E}(F(R, K))$ werden die neuen Maximum-Like\-li\-hood Schätzer $\hat{\beta}^{(t)}$, $\hat{\eta}^{(t)}$ und $\hat{\pi}^{(t)}$ berechnet. Für die ML-Schätzungen in Durchgang $t$ ergeben sich folgende Gleichungen (Herleitung: siehe Anhang A):
+\begin{align*}
+\hat{\beta}_q^{(t)} = {}& \frac{\sum_{R \in \mathcal{R}}  \sum_{K \in \mathcal{K}} F(R, K) \cdot i_{q \in (K \setminus R)}}{\sum_{R \in \mathcal{R}}  \sum_{K \in \mathcal{K}} F(R, K) \cdot i_{q \in K}} \\
+\hat{\eta}_q^{(t)} = {}&\frac{\sum_{R \in \mathcal{R}}  \sum_{K \in \mathcal{K}} F(R, K) \cdot i_{q \in (R \setminus  K)}}{\sum_{ R \in \mathcal{R}}  \sum_{K \in \mathcal{K}} F(R, K) \cdot i_{q \in (Q \setminus K)}} \\
+\hat{\pi}_K^{(t)} = {}& \frac{1}{N} \sum_{ R \in \mathcal{R}} F(R, K)
+\end{align*}
+mit der Stichprobengröße $N = \sum_{R \in \mathcal{R}}  \sum_{K \in \mathcal{K}} F(R, K) $ und den Indikatorvariablen $i_{...}$, die nach dem Schema $i_{q \in \mathcal{T}}$ mit $\mathcal{T} = K \setminus R$, $\mathcal{T} = K$, $\mathcal{T} =R \setminus  K$ und $\mathcal{T} = Q \setminus K$ aufgebaut sind:
+\begin{equation}
+\label{eq:indikatorvariable}
+i_{q \in \mathcal{T}} = \begin{cases}
+1 & \text{,wenn}\quad q \in \mathcal{T}\\
+0 & \text{sonst}        
+\end{cases}\\
+\end{equation} 
+\end{itemize}

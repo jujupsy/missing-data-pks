@@ -1,0 +1,162 @@
+\section{Umgang mit fehlenden Daten}
+Bei der praktischen Anwendung von Tests, Fragebögen u.ä. ist es häufig der Fall, dass Personen nicht alle Aufgaben bearbeitet haben, also weder eine richtige noch falsche Antwort vorliegt. Gründe hierfür sind vielfältig und reichen von \glqq eine Person gibt lieber keine, statt eine falsche Antwort, also nicht-Wissen\grqq\  bis \glqq aufgrund von Zeitdruck können nicht alle Aufgaben bearbeitet werden\grqq. Diese fehlenden Daten müssen bei der Auswertung berücksichtigt werden, damit es zu keinen systematischen Verzerrungen bei der Parameterschätzungen und Wiederherstellung der latenten Wissenszustände kommt. Dafür ist wesentlich, wie diese fehlenden Daten zustande kommen, also ob es z.B. Abhängigkeiten zwischen den fehlenden Daten und richtig gelösten Aufgaben gibt. Die verschiedenen Prozesse, die zu fehlenden Daten führen, werden im folgenden auch als Dezimierungsmechanismen bezeichnet. \citet{Rubin2002} unterscheiden drei wesentliche statistische Mechanismen, die zu fehlenden Daten führen. Für deren Verständnis betrachten wir eine $n \times m$ Matrix $Y$, deren Spalten die verschiedenen Aufgaben und Zeilen die verschiedenen Personen darstellen. Die Antwort einer Person $i$ auf die Aufgabe $j$ wird in $Y$ mit $y_{ij} = 1$ kodiert, wenn Person $i$ Aufgabe $j$ löst, sonst mit $0$. Diese theoretische Matrix $Y$ enthält die kompletten Daten. Zusätzlich gibt es eine $n \times m$ Matrix $M$, in der eine fehlende Antwort von Person $i$ auf Aufgabe $j$ mit $m_{ij} = 1$ und sonst $0$ kodiert wird. Die Indikatorvariablen in $M$ für fehlende Daten werden dann als Zufallsvariablen betrachtet um anhand der bedingten Wahrscheinlichkeit $P(M \mid Y)$ den Zusammenhang zwischen $M$ und $Y$ zu charakterisieren. Dieser ist ausschlaggebend für die Unterscheidung der verschiedenen Dezimierungsmechanismen:
+
+\begin{itemize}
+\item Missing Completely at Random (MCAR): In diesem Fall gibt es keinen Zusammenhang zwischen den fehlenden Daten $M$ und den vollständigen Daten $Y$, somit gilt $P(M \mid Y) = P(M)$. Dieser Fall wird auch als \textit{ignorable missings} bezeichnet. Angewandt auf die Terminologie der Theorie der Wissensstrukturen gilt bei MCAR, dass der Dezimierungsmechanismus unabhängig vom Wissenszustand $K$ ist. Dies ist z.B. dann der Fall, wenn Personen nur eine zufällige Teilmenge von Aufgaben aus $Q$ zur Bearbeitung vorgelegt wird.
+\item Missing at Random (MAR): Hier wird die Matrix $Y$ in einen beobachtbaren Teil $Y_{obs}$ und nicht-beobachtbaren Teil $Y_{miss}$ aufgeteilt. Letzterer kennzeichnet das theoretische Antwortverhalten bei den nicht beantworteten Aufgaben. Bei MAR hängt $M$ nur von den beobachteten Daten $Y_{obs}$ ab, es gilt also $P(M \mid Y) = P(M \mid Y_{obs})$. Dieser Fall wird hier jedoch nicht weiter behandelt werden.
+\item Not Missing at Random (MNAR\footnote{\citet{Rubin2002} haben die Abkürzung NMAR gewählt, da aber in dem Paper von \citet{DeChiusole2015}, auf das diese Arbeit größtenteils aufbaut, die Bezeichnung MNAR verwendet wird, soll diese hier auch so gewählt werden.}): Hier wird angenommen, dass die fehlenden Daten $M$ nicht unabhängig von $Y_{miss}$ sind. Man spricht daher auch von \textit{non-ignorable missings}. Bei MNAR werden nun Abhängigkeiten zwischen den fehlenden Antworten $M$ und dem Wissenszustand $K$ angenommen. Dies bedeutet, dass abhängig von den beherrschten Aufgaben in $K$, die fehlenden Daten $M$ variieren. Wenn man beispielsweise annimmt, dass Personen, die eine Aufgabe $q$ nicht beherrschen, $q \not \in K$, eher dazu neigen keine Antwort zu geben, als Personen, die $q$ beherrschen. 
+\end{itemize}
+
+\citet{DeChiusole2015} haben für die beiden Fälle MCAR und MNAR Abwandlungen des BLIM entwickelt, die die Modellierung der fehlenden Daten unter MCAR und MNAR Bedingung ermöglichen.
+Hierzu muss neben dem Antwortmuster $R$, der Menge der richtig beantworteten Aufgaben $q \in Q$, auch die Menge der fehlenden Antworten $M \subseteq (Q \setminus R)$ betrachtet werden. Alle möglichen Paare $\langle R, M \rangle$ werden in der Menge $\mathcal{Q}$ zusammengefasst und stellen, neben den absoluten Häufigkeiten $F(R, M)$ die beobachtbaren Daten dar, $\mathcal{Q} = \{ \langle R, M \rangle: R\subseteq Q, M \subseteq (Q \setminus R) \} $.
+Für die Likelihood dieser Daten gilt dann:
+$$\mathcal{L}(\mathcal{Q} | \beta, \eta, \pi) = \prod_{ \langle R, M \rangle \in \mathcal{Q}} P(R, M  \mid  \beta, \eta, \pi)^{F(R, M)}$$
+
+Die nachfolgend beschriebenen Modelle unterscheiden sich dann in der Berechnung der Wahrscheinlichkeiten $P(R, M)$.
+
+\subsection{Ignorable Missingness: IMBLIM}
+Das \textit{Ignorable Missingness BLIM} (IMBLIM) beruht auf der Annahme, dass die fehlenden Antworten der Personen dem MCAR Dezimierungsmechanismus entsprechen. Das heißt, dass hier keine Abhängigkeiten zwischen den fehlenden Antworten $M$ und dem Wissenszustand $K$ angenommen werden. Unabhängig in welchem Wissenszustand eine Person sich befindet und somit auch unabhängig von der einzelnen Aufgabe fehlen die Daten mit einer gewissen Wahrscheinlichkeit. Der Dezimierungsmechanismus wird also als unabhängig von dem Prozess angesehen, der die theoretisch vollständigen Daten $R^{*}$ erzeugt \citep{DeChiusole2015}. Für die Modellierung der fehlenden Antworten wird nun ein zweistufiger Prozess angenommen: Im ersten Schritt werden basierend auf dem BLIM und allen damit einhergehenden Annahmen (siehe Abschnitt \ref{probWS}) die vollständigen Daten $R^{*}$ modelliert. Der zweite Schritt besteht in der Anwendung des Dezimierungsmechanismus, der aus $Q$ die fehlenden Daten $M$ \glqq auswählt\grqq. Es gilt dann: $R = R^{*} \setminus M$ und man erhält das beobachtbare Paar $\langle R, M \rangle$.
+Mathematisch bedeutet dies, dass zuerst die Wahrscheinlichkeiten $P(R^{*}, M  \mid  K)$ betrachtet werden können, also die Wahrscheinlichkeiten der vollständigen Daten $R^{*}$ und der fehlenden Daten $M$ gegeben die Person befindet sich im Wissenszustand $K$. Aufgrund der Annahme, dass der Dezimierungsmechanismus unabhängig von dem Prozess ist, der die vollständigen Daten $R^{*}$ erzeugt, gilt: $P(R^{*}, M  \mid  K) = P(R^{*}  \mid  K)\cdot P(M)$. Unter der plausiblen Annahme, dass $P(M)$ unabhängig von den Parametern $\beta$ und $\eta$ ist, folgt daraus dann $P(R^{*}, M) = P(M) \sum_{K \in \mathcal{K}} P(R^{*}  \mid  K) \cdot \pi_K$. \citet{DeChiusole2015} haben gezeigt, dass darauf aufbauend für die Wahrscheinlichkeit der Daten $\langle R, M \rangle$ gilt:
+
+\begin{equation}
+\label{eq:PRM_IMBLIM}
+P(R, M) = P(M) \sum_{K \in \mathcal{K}} P(\langle R, M \rangle^{*} \mid K) \cdot  \pi_K 
+\end{equation}
+
+\noindent
+mit:
+\begin{equation}
+\label{eq:PRMS.K}
+P(\langle R, M \rangle^{*} \mid K) = \prod\limits_{q \in Q} p_q, \,\, p_q = \begin{cases}
+ \beta_q     & q \not\in R, q     \in K, q \not\in M \\
+ 1 - \beta_q & q     \in R, q     \in K, q \not\in M \\
+ \eta_q      & q     \in R, q \not\in K, q \not\in M \\
+ 1 - \eta_q  & q \not\in R, q \not\in K, q \not\in M 
+\end{cases} 
+\end{equation}
+\noindent
+wobei  $\langle R, M \rangle^{*}$ die Menge der zum Paar $\langle R, M \rangle$ kompatiblen Antwortmuster darstellt, d.h. $\langle R, M \rangle^{*} = \{ R \cup C : C \subseteq M\}$.
+Es wird hier also strukturell die Antwortregel des BLIM (vgl. Gleichung \eqref{eq:antwortregel}) angewendet, nur dass die Aufgaben mit fehlenden Antworten nicht berücksichtigt werden.
+
+Bei keinen fehlenden Daten, also $M = \emptyset$, sind die Vorhersagen für IMBLIM und BLIM identisch, da wie oben leicht zu sehen, die Wahrscheinlichkeit $P(\langle R, M \rangle^{*} \mid K)$ zu $P(R \mid K)$ wird. 
+    
+\subsection{Non-ignorable Missingness: MissBLIM}
+\citet{DeChiusole2015} haben auch für den MNAR Dezimierungsmechanismus eine Erweiterung des BLIM hergeleitet. Hierbei wird nun die Unabhängigkeit zwischen den fehlenden Antworten $M$ und dem Wissenszustand $K$ aufgegeben. Je nach Wissenszustand $K$ ist die Wahrscheinlichkeit, dass ein bestimmtes Item $q \in Q$ nicht beantwortet wird verschieden. Dies ermöglicht eine viel flexiblere Modellierung der fehlenden Antworten, hat aber auch einen Anstieg der Parameter zur Folge. Insgesamt werden zusätzlich $2 \cdot |Q|$ Parameter benötigt. Es lässt sich aufgrund der Nähe zu Latent-Class-Modellen folgendes Modell aufstellen \citep{DeChiusole2015}:
+
+\begin{equation}
+\label{eq:PRM_MissBLIM}
+P(R, M) = \sum_{K \in \mathcal{K}} P(\langle R, M \rangle^{*} \mid K) \cdot P(M \mid K) \cdot \pi_K
+\end{equation}
+
+\noindent
+mit $P(\langle R, M \rangle^{*} \mid K)$ wie in Gleichung \eqref{eq:PRMS.K} und der bedingten Wahrscheinlichkeit der fehlenden Antworten $M$ gegeben den latenten Wissenszustand $K$, $P(M \mid K)$. Die Abhängigkeit zwischen $M$ und $K$ führt dazu, dass die Wahrscheinlichkeit $P(M \mid K)$ definiert werden muss. Hierzu sind zwei Annahmen zu treffen: Erstens ist wie schon bei dem Antwortmuster $R$ bei der Anwendung des BLIM auch für die fehlenden Antworten $M$ die Annahme der lokalen stochastischen Unabhängigkeit wichtig. Sie besagt, dass bei festem Wissenszustand $K$ das nicht-Beantworten bzw. Beantworten einer Aufgabe keinen Einfluss auf das Antwortverhalten bei den anderen Aufgaben hat. Die gesamte Information über die fehlenden Daten steckt somit in dem Wissenszustand $K$. Die zweite Annahme beschreibt die mathematische Modellierung und ist eng mit der ersten verknüpft. Es wird angenommen, dass $P(M \mid K)$ folgendermaßen beschrieben werden kann \citep{DeChiusole2015}:
+
+\begin{equation}
+\label{eq:PM.K}
+P(M \mid K) = \prod\limits_{q \in Q} p_q, \,\, p_q = \begin{cases}
+ \mu_q            & q     \in M, q      \in K \\
+ 1 - \mu_q         & q \not\in M, q     \in K \\
+ \mu_{\bar{q}}     & q     \in M, q \not\in K \\
+ 1 - \mu_{\bar{q}} & q \not\in M, q \not\in K
+\end{cases}
+\end{equation}
+\noindent
+$\mu_q$ beschreibt hier die Wahrscheinlichkeit, dass Aufgabe $q$, wenn sie in $K$ enthalten ist, nicht beantwortet wird, und $\mu_{\bar{q}}$ beschreibt die Wahrscheinlichkeit, dass die Aufgabe nicht beantwortet wird, wenn sie nicht in $K$ enthalten ist. Über diese Parameter $\mu = (\mu_q)_{q \in Q}$ und $\bar{\mu} = (\mu_{\bar{q}})_{q \in Q}$ lässt sich somit die Abhängigkeit zwischen $M$ und $K$ erfassen.
+
+Für den Zusammenhang zwischen BLIM und MissBLIM gilt, dass sie äquivalent sind, sobald keine fehlenden Antworten existieren, also $M = \emptyset$ gilt. Dies lässt sich für $P(\langle R, M \rangle^{*} \mid K)$ leicht anhand der Beziehung zwischen BLIM und IMBLIM zeigen. Weiterhin gilt für $P(M \mid K)$, dass aufgrund $M = \emptyset$ die Parameter $\mu_q$ und $\mu_{\bar{q}}$ gleich $0$ sind und somit nur die Paare $\langle R, M \rangle$, bei denen $M = \emptyset$ eine Wahrscheinlichkeit $P(R, M) > 0$ haben \citep{DeChiusole2015}. Bei vollständigen Daten sind also alle drei Modelle, BLIM, IMBLIM und MissBLIM, äquivalent.
+
+
+
+
+
+\subsection{Sonderfall BLIM}
+Da das BLIM in der ursprünglichen Form nicht mit fehlenden Daten umgehen kann, müssen die fehlenden Antworten transformiert oder für die Schätzung der Parameter des BLIM ausgeschlossen werden. Das Ausschließen der Antwortmuster, die fehlende Daten enthalten, kann dazu führen, dass die Schätzungen sehr ungenau werden, da die Stichprobengröße mit zunehmendem Anteil fehlender Daten abnimmt. Auf der anderen Seite ist eine Transformation der fehlenden Werte immer mit Annahmen verbunden, die, wenn sie nicht gerechtfertigt sind, zu einer Verzerrung der Schätzungen führen können. Die gängigste Annahme hierbei ist, dass fehlende Daten aufgrund nicht-Wissen zustande kommen. Eine Person beantwortet danach eine Frage nicht, wenn sie diese nicht beherrscht. Die anzuwendende Transformation ist dann die \glqq Missing-as-Wrong\grqq -Transformation (im Folgenden: MAW-Transformation). Fehlende Antworten werden also der Menge der nicht gelösten Aufgaben zugeordnet. \citet{DeChiusole2015} haben gezeigt, dass die MAW-Transformation bei Daten, die dem im MissBLIM postulierten Prozess entstammen, zu systematischen Verzerrungen der Schätzungen $\hat{\beta}_q$ und $\hat{\eta}_q$ führt. Diese Verzerrungen sind proportional zu den $\mu_q$ und $\mu_{\bar{q}}$ Parametern. Es gilt mit 
+$\beta_q^{true}$ und $\eta_q^{true}$ als den wahren Werten der Parameter $\beta_q$ und $\eta_q$:
+
+\begin{equation}
+\label{eq:maw_bias_beta}
+\Delta\beta_q^{MAW} = \hat{\beta}_q - \beta_q^{true} = \mu_q \cdot (1 - \beta_q^{true}) \geq 0
+\end{equation}
+
+\begin{equation}
+\label{eq:maw_bias_eta}
+\Delta\eta_q^{MAW} = \hat{\eta}_q - \eta_q^{true} = -\mu_{\bar{q}} \cdot \eta_q^{true} \leq 0
+\end{equation}
+
+Die beiden Spezialfälle des BLIM sowohl mit MAW-Transformation als auch mit ausschließlich den vollständigen Antwortmustern werden im folgenden als BLIM\textsubscript{MAW} bzw. BLIM\textsubscript{COMP} bezeichnet. 
+
+
+
+\clearpage
+
+\section{Parameterschätzung}
+Wie schon für das BLIM (vgl. Abschnitt \ref{EM-BLIM}) kann die Schätzung der Parameter des IMBLIM sowie des MissBLIM mithilfe des EM-Algorithmus erfolgen \citep{DeChiusole2015}. Es wird hierbei angenommen, dass neben dem Paar $\langle R, M \rangle$ auch der jeweils zugehörige Wissenszustand $K$ beobachtbar ist. Für die Schätzung muss die Likelihood der vollständigen Daten aufgestellt werden. Dann können die erwarteten absoluten Häufigkeiten $F(R, M, K)$ im Durchgang $t$ mit den Parameterschätzungen des vorherigen Durchgangs $t-1$ berechnet und die neuen Maximum-Likelihood-Schätzer geschätzt werden. Die letzten beiden Schritte werden nun iterativ so lange wiederholt, bis der Algorithmus gegen einen Wert konvergiert und/oder ein bestimmtes Abbruchkriterium erreicht wird. 
+
+Für die Likelihood der vollständigen Daten $\mathcal{Q}_K$, als der Menge aller mögliche Tripel $\langle R, M, K \rangle$ und dem Parametervektor $\theta$, der alle Parameter des Modells enthält, gilt allgemein:
+$$\mathcal{L}(\mathcal{Q}_K  \mid  \theta) = \prod_{\langle R, M, K \rangle \in \mathcal{Q}_K} P(R, M, K  \mid  \theta)^{F(R, M, K)}$$
+
+\noindent
+Für das IMBLIM folgt daraus mit den Parametervektoren $\beta$, $\eta$ und $\pi$ für alle Aufgaben $q \in Q$ bzw. Wissenszustände $K \in \mathcal{K}$
+\begin{equation}
+\label{eq:LH_IMBLIM}
+\mathcal{L}(\mathcal{Q}_K  \mid  \beta, \eta, \pi) = \prod_{\langle R, M, K \rangle \in \mathcal{Q}_K} \big(P(M) \cdot P(\langle R, M \rangle^{*} \mid K, \beta, \eta) \cdot \pi_K \big)^{F(R, M, K)}
+\end{equation}
+
+\noindent
+und für das MissBLIM gilt mit zusätzlich den Parametervektoren $\mu$ für alle Parameter $\mu_q$ und $\bar{\mu}$ für alle Parameter $\mu_{\bar{q}}$
+\begin{equation}
+\label{eq:LH_MissBLIM}
+\mathcal{L}(\mathcal{Q}_K  \mid  \beta, \eta, \pi, \mu, \bar{\mu}) = \prod_{\langle R, M, K \rangle \in \mathcal{Q}_K} \big( P(\langle R, M \rangle^{*} \mid K, \beta, \eta) \cdot P(M\mid K, \mu, \bar{\mu})  \cdot \pi_K \big)^{F(R, M, K)}
+\end{equation}
+
+
+Der benötigte Erwartungswert für die absoluten nicht-beobachtbaren Häufigkeiten $F(R, M, K)$ im Durchgang $t$ mit den Parameterschätzungen $\hat{\theta}^{(t-1)}$ aus dem vorherigen Durchgang und den beobachtbaren absoluten Häufigkeiten $F(R, M)$ der richtig gelösten Aufgaben $R$ und fehlenden Antworten $M$ lässt sich allgemein folgendermaßen berechnen:
+
+\begin{equation}
+\label{eq:E_FRMK}
+\mathcal{E}(F(R, M, K)) = F(R, M) \cdot P(K \mid R, M, \hat{\theta}^{(t-1)})
+\end{equation}
+
+\noindent
+Die Wahrscheinlichkeit $P(K \mid R, M, \hat{\theta}^{(t-1)})$ lässt sich dann für das IMBLIM und MissBLIM mit Hilfe des Satz von Bayes berechnen
+
+\begin{equation}
+\label{eq:PKRM}
+P(K \mid R, M, \hat{\theta}^{(t-1)}) = \frac{P(R, M \mid K, \hat{\theta}^{(t-1)}) \cdot \pi_K}{P(R,M \mid \hat{\theta}^{(t-1)})}
+\end{equation}
+
+\noindent 
+mit $P(R, M \mid K) = P(\langle R, M \rangle^{*} \mid K, \hat{\beta}^{(t-1)}, \hat{\eta}^{(t-1)}) \cdot P(M)$ für das IMBLIM mit $P(\langle R, M \rangle^{*} \mid K, \hat{\beta}^{(t-1)}, \hat{\eta}^{(t-1)})$ wie in Gleichung \eqref{eq:PRMS.K} und $P(M)$ als der relativen Häufigkeit der fehlenden Antworten $M$. Für das MissBLIM gilt entsprechend $P(R, M \mid K) = P(\langle R, M \rangle^{*} \mid K, \beta^{(t-1)}, \eta^{(t-1)}) \cdot P(M \mid K, \mu^{(t-1)}, \bar{\mu}^{(t-1)})$ mit den Gleichungen \eqref{eq:PRMS.K} und \eqref{eq:PM.K}. Weiterhin ist $P(R,M)$ in Gleichung \eqref{eq:PRM_IMBLIM} für das IMBLIM bzw. in Gleichung \eqref{eq:PRM_MissBLIM} für das MissBLIM definiert.
+
+Mit diesen erwarteten nicht-beobachtbaren Häufigkeiten $\mathcal{E}(F(R, M, K))$ für \newline
+$F(R, M, K)$ in die Likelihood \eqref{eq:LH_IMBLIM} bzw. \eqref{eq:LH_MissBLIM} eingesetzt, können für den Durchgang $t$ nun neue ML-Parameterschätzungen berechnet werden. Hierfür ist die Likelihood partiell nach den einzelnen Parametern abzuleiten, Null zu setzen und anschließend nach den Parametern aufzulösen. Es ergeben sich für das IMBLIM folgende Schätzungen für die Parameter im Durchgang $t$, wobei die Indikatorvariablen  $i_{...}$ nach dem gleichen Schema wie in Gleichung \eqref{eq:indikatorvariable} aufgebaut sind (für eine Herleitung der ML-Schätzer siehe Anhang A):
+
+\begin{equation}
+\label{eq:beta}
+\hat{\beta}_q^{(t)} = \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in K \setminus (R \cup M)}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in K \setminus M}}
+\end{equation}
+
+\begin{equation}
+\label{eq:eta}
+\hat{\eta}_q^{(t)} = \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot i_{q \in R \setminus K}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in Q \setminus (M \cup K)}}
+\end{equation}
+
+\begin{equation}
+\label{eq:pi}
+\hat{\pi}_K^{(t)} = \frac{1}{N} \sum_{\langle R, M \rangle \in \mathcal{Q}} F(R, M, K)
+\end{equation}
+\noindent
+mit der Stichprobengröße $N = \sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}   F(R, M, K)$.
+
+Für das MissBLIM ergeben sich für $\beta$, $\eta$ und $\pi$ die gleichen ML-Schätzer wie in den Gleichungen \eqref{eq:beta}, \eqref{eq:eta} und \eqref{eq:pi} für das IMBLIM beschrieben. Hinzu kommen jedoch noch die Schätzungen für die Parameter $\mu$ und $\bar{\mu}$:
+
+\begin{equation}
+\label{eq:mu}
+\hat{\mu}_q^{(t)} = \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot i_{q \in K \cap M}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K}  F(R, M, K) \cdot  i_{q \in K}}
+\end{equation}
+
+\begin{equation}
+\label{eq:bar_mu}
+\hat{\mu}_{\bar{q}}^{(t)} = \frac{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot i_{q \in M \setminus K}}{\sum_{\langle R, M, K \rangle \in \mathcal{Q}_K} F(R, M, K) \cdot  i_{q \in Q \setminus K}}
+\end{equation}
+

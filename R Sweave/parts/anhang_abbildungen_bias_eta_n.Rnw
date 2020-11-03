@@ -1,0 +1,35 @@
+\section{$\eta$-Parameter und Stichprobengröße}
+Wiederherstellung des $\eta$-Parameters in Abhängigkeit der Stichprobengröße.
+
+\begin{figure}[h!]
+\begin{center}
+<<echo=FALSE, results=hide>>=
+#load("data/ag_bias_n.rda")
+pdf("plots/bias_n_eta.pdf", width = 5.9, height = 6.5, pointsize = 12, family="CM Roman")
+
+pd <- position_dodge(0) 
+
+cond.lab <- c("mc[10]", "mc[20]", "ks[10]", "ks[20]", "iks[C2]", "iks[C4]")
+ag_bias$cond <- factor(ag_bias$cond, labels = cond.lab)
+
+bp <- ggplot(ag_bias[ag_bias$para == "eta",], aes(x = n, y = bias, colour = model)) + 
+      geom_errorbar(aes(ymin = bias - SD, ymax = bias + SD), width = 1, position = pd) +
+      geom_line(position = pd) +
+      geom_point(position = pd, size = 1) +
+      theme(legend.position = "top") + 
+      labs(color = " ") + 
+      scale_colour_discrete(labels = c(expression("BLIM"[COMP]), expression("BLIM"[MAW]), "IMBLIM", "MissBLIM")) + 
+      xlab("Stichprobengröße N") + ylab("Verzerrung der Schätzung") +
+      #theme(text=element_text(family="CM Roman")) +
+      theme(axis.title.x = element_text(margin = margin(t = 8, r = 0, b = 0, l = 0))) + 
+      scale_x_continuous(trans = 'log2', breaks = c(100, 400, 1600, 6400, 25600))
+
+bp + facet_wrap(~ cond, ncol = 2,
+                labeller = label_parsed)
+dev.off()
+@
+\includegraphics[width=1\textwidth]{plots/bias_n_eta}
+\end{center}
+\caption[$\eta$-Parameter in Abhängigkeit der Stichprobengröße $N$ für $\mathcal{K}_s$]{Verzerrung des $\eta$-Parameters der verschiedenen Modell gemittelt über alle Aufgaben in Abhängigkeit der simulierten Stichprobengröße $N$ und des Dezimierungsmechanismus basierend auf der Wissensstruktur $\mathcal{K}_s$. Zusätzlich sind die Standardabweichungen als Fehlerbalken eingezeichnet. Die Abszisse ist zur Basis 2 logarithmiert.}
+\label{fig:bias_n_eta}
+\end{figure}

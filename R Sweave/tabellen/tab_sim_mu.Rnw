@@ -1,0 +1,13 @@
+	\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}}  r c c r c c r c c @{}} 
+ 	\toprule
+ 	\multicolumn{3}{c}{MCAR} & \multicolumn{3}{c}{ks-MNAR} & \multicolumn{3}{c}{iks-MNAR} \\
+ 	\cmidrule{1-3} \cmidrule{4-6}  \cmidrule{7-9}
+ 		    &  $ \mu_q $ & $\mu_{\bar{q}}$ &    &  $ \mu_q $ & $\mu_{\bar{q}}$ &     &  $ \mu_q $ & $\mu_{\bar{q}}$  \\ 
+ 	\midrule
+ 		$\text{mc}_{10}$ & $0.1$ & $0.1$ & $\text{ks}_{10}$ & $0$ & $0.2$ & $\text{iks}_{C1}$ & $[.4, .5]$ & $(0,  .1]$ \\
+ 		$\text{mc}_{20}$ & $0.2$ & $0.2$ & $\text{ks}_{20}$ & $0$ & $0.4$ & $\text{iks}_{C2}$ & $[.3, .4]$ & $[.1, .2]$ \\
+ 		$\text{mc}_{30}$ & $0.3$ & $0.3$ & $\text{ks}_{30}$ & $0$ & $0.6$ & $\text{iks}_{C3}$ & $[.2, .3]$ & $[.2, .3]$ \\
+ 		$\text{mc}_{40}$ & $0.4$ & $0.4$ & $\text{ks}_{40}$ & $0$ & $0.8$ & $\text{iks}_{C4}$ & $[.1, .2]$ & $[.3, .4]$ \\
+ 		                   &       &       &                       &     &       & $\text{iks}_{C5}$ & $(0,  .1]$ & $[.4, .5]$ \\ 
+    \bottomrule
+	\end{tabularx}

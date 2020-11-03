@@ -1,0 +1,13 @@
+\begin{tabularx}{\textwidth}{@{\extracolsep{\fill}} c S[table-format=1.3] S[table-format=1.3] c S[table-format=1.3] S[table-format=1.3] c S[table-format=1.3] S[table-format=1.3] @{}}
+  \toprule
+  \multicolumn{3}{c}{MCAR} \      & \multicolumn{3}{c}{ks-MNAR} & \multicolumn{3}{c}{iks-MNAR} \\ 
+  \cmidrule{1-3}  \cmidrule{4-6}  \cmidrule{7-9} 
+   & $\mu$ & $\bar{\mu}$ &  & $\mu$ & $\bar{\mu}$ &   & $\mu$ & $\bar{\mu}$ \\
+  \midrule
+  $\text{mc}_{1}$  & \Sexpr{format(t2_r_emp[1, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[1, 2], nsmall = 3)}  & $\text{ks}_{1}$ &  \Sexpr{format(t2_r_emp[5, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[5, 2], nsmall = 3)}   & $\text{iks}_{c1}$ &    \Sexpr{format(t2_r_emp[9,  1], nsmall = 3)} & \Sexpr{format(t2_r_emp[9,  2], nsmall = 3)}  \\ 
+  $\text{mc}_{5}$  & \Sexpr{format(t2_r_emp[2, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[2, 2], nsmall = 3)}  & $\text{ks}_{5}$ &  \Sexpr{format(t2_r_emp[6, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[6, 2], nsmall = 3)}   & $\text{iks}_{c2}$ &    \Sexpr{format(t2_r_emp[10, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[10, 2], nsmall = 3)}  \\ 
+  $\text{mc}_{10}$  & \Sexpr{format(t2_r_emp[3, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[3, 2], nsmall = 3)}  & $\text{ks}_{10}$ &  \Sexpr{format(t2_r_emp[7, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[7, 2], nsmall = 3)}   & $\text{iks}_{c3}$ &    \Sexpr{format(t2_r_emp[11, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[11, 2], nsmall = 3)}  \\ 
+  $\text{mc}_{15}$  & \Sexpr{format(t2_r_emp[4, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[4, 2], nsmall = 3)}  & $\text{ks}_{15}$ &  \Sexpr{format(t2_r_emp[8, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[8, 2], nsmall = 3)}   & $\text{iks}_{c4}$ &    \Sexpr{format(t2_r_emp[12, 1], nsmall = 3)} & \Sexpr{format(t2_r_emp[12, 2], nsmall = 3)}  \\ 
+\bottomrule
+   
+\end{tabularx}

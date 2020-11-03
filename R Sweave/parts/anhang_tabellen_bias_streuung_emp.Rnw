@@ -1,0 +1,38 @@
+\section{Tabellen empirische Wissensstrukturen}
+Nachfolgend die Tabellen der mittleren Verzerrung und Streuung für die drei empirischen Wissensstrukturen mit der Stichprobengröße $N = 3700$. Diese erleichtern den Vergleich mit den Ergebnissen basierend auf der simulierten Wissensstruktur.
+
+% Erregbarkeit
+\begin{table}[h!]
+	\caption[Verzerrung und Streuung der Parameterschätzungen für $\mathcal{K}_{err}$ $(N = 3700)$]{Verzerrung und Standardabweichung der Parameterschätzungen in Abhängigkeit des Modells und Dezimierungsmechanismus über alle 12 Items gemittelt für die auf Basis der Wissensstruktur $\mathcal{K}_{err}$ simulierten Daten.}
+	\label{tab:bias_emp_err}
+    \SweaveInput{../tabellen/tab_bias_emp_err}
+    
+    \SweaveInput{../tabellen/tab_bias_sd_emp_err}
+    
+	\smallskip
+	\small\textit{Anmerkung}. Alle Werte wurden mit 1000 multipliziert um die Darstellung zu verbessern. Die simulierte Stichprobengröße pro Datensatz war $N = 3700 $ mit je 200 Datensätzen pro Simulationsart.
+\end{table}
+
+% Gehemmtheit
+\begin{table}[p!]
+	\caption[Verzerrung und Streuung der Parameterschätzungen für $\mathcal{K}_{geh}$ $(N = 3700)$]{Verzerrung und Standardabweichung der Parameterschätzungen in Abhängigkeit des Modells und Dezimierungsmechanismus über alle 12 Items gemittelt für die auf Basis der Wissensstruktur $\mathcal{K}_{geh}$ simulierten Daten.}
+	\label{tab:bias_emp_geh}
+    \SweaveInput{../tabellen/tab_bias_emp_geh}
+    
+    \SweaveInput{../tabellen/tab_bias_sd_emp_geh}
+    
+	\smallskip
+	\small\textit{Anmerkung}. Alle Werte wurden mit 1000 multipliziert um die Darstellung zu verbessern. Die simulierte Stichprobengröße pro Datensatz war $N = 3700 $ mit je 200 Datensätzen pro Simulationsart.
+\end{table}
+
+% Gesundheitssorgen
+\begin{table}[p!]
+	\caption[Verzerrung und Streuung der Parameterschätzungen für $\mathcal{K}_{ges}$ $(N = 3700)$]{Verzerrung und Standardabweichung der Parameterschätzungen in Abhängigkeit des Modells und Dezimierungsmechanismus über alle 12 Items gemittelt für die auf Basis der Wissensstruktur $\mathcal{K}_{ges}$ simulierten Daten.}
+	\label{tab:bias_emp_ges}
+    \SweaveInput{../tabellen/tab_bias_emp_ges}
+
+    \SweaveInput{../tabellen/tab_bias_sd_emp_ges}
+    
+	\smallskip
+	\small\textit{Anmerkung}. Alle Werte wurden mit 1000 multipliziert um die Darstellung zu verbessern. Die simulierte Stichprobengröße pro Datensatz war $N = 3700 $ mit je 200 Datensätzen pro Simulationsart.
+\end{table}
