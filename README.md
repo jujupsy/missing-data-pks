@@ -23,4 +23,4 @@ Der Code ist in mehreren "Ebenen" organisiert:
 ## Bedeutung der .rda Dateien
 
 - tKS_1432.rda: Simulierte WS mit Seed 1432 (Seed = Uhrzeit des Startens der Simulation)
-- fitted_models_[WS]_[Seed]_[Stichprobengröße]_[Anzahl an Datensätzen]_[Datensimulationsseed =  42].rda (42: [“life, the universe and everything”](https://de.wikipedia.org/wiki/42_(Antwort)))]: Angepasste Modellschätzungen, Ausgangspunkt der weiteren Auswertung (siehe **/R Sweave/Fehlende_Daten_pks.Rnw**)
+- fitted_models_WS_Seed_Stichprobengröße_Anzahl an Datensätzen_Datensimulationsseed =  42.rda (42: [“life, the universe and everything”](https://de.wikipedia.org/wiki/42_(Antwort)))]: Angepasste Modellschätzungen, Ausgangspunkt der weiteren Auswertung (siehe **/R Sweave/Fehlende_Daten_pks.Rnw**)
