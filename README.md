@@ -28,8 +28,8 @@ Der Code ist in mehreren "Ebenen" organisiert:
 ## Hardware
 
 Die Simulationen wurden auf einem Desktop Computer mit folgenden Spezifikationen durchgeführt:
-- OS: Ubuntu 20.04 LTS 
-- R: 4.0.2 (2020-06-22) -- "Taking Off Again"
-- CPU: AMD Ryzen 9 3900X 12-Core Processor
-- RAM: DDR4 32 GiB
-- Memory:  500 GB NVMe SSD 
+- **OS**: Ubuntu 20.04 LTS 
+- **R-Version**: 4.0.2 (2020-06-22) -- "Taking Off Again"
+- **CPU**: AMD Ryzen 9 3900X 12-Core Processor
+- **RAM**: DDR4 32 GiB
+- **Speicher**:  500 GB NVMe SSD 
