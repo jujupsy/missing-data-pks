@@ -24,3 +24,12 @@ Der Code ist in mehreren "Ebenen" organisiert:
 
 - tKS_1432.rda: Simulierte WS mit Seed 1432 (Seed = Uhrzeit des Startens der Simulation)
 - fitted_models_WS_Seed_Stichprobengröße_Anzahl an Datensätzen_Datensimulationsseed =  42.rda (42: [“life, the universe and everything”](https://de.wikipedia.org/wiki/42_(Antwort)))]: Angepasste Modellschätzungen, Ausgangspunkt der weiteren Auswertung (siehe **/R Sweave/Fehlende_Daten_pks.Rnw**)
+
+## Hardware
+
+Die Simulationen wurden auf einem Desktop Computer mit folgenden Spezifikationen durchgeführt:
+- OS: Ubuntu 20.04 LTS 
+- R: 4.0.2 (2020-06-22) -- "Taking Off Again"
+- CPU: AMD Ryzen 9 3900X 12-Core Processor
+- RAM: DDR4 32 GiB
+- Memory:  500 GB NVMe SSD 
