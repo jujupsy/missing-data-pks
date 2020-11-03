@@ -2,4 +2,4 @@ Die Auswertungen wurden mit R Sweave und der Satz mit Latex kombiniert durchgefü
 
 Die Daten, die durch die entsprechenden Simulationsabläufe ([...]_flow.R) erzeugt wurden sind in /data enthalten und werden von dort in **Fehlende_Daten_pks.Rnw** eingelesen.
 
-Für das Kompilieren sind entsprechende Schriftarten notwendig ("CM Roman") sowie Ghostscipt um diese in die PDF Plots und später in das durch PDFLatex erzeugt PDF einzubinden. (Kann sonst auf anderen PCs zur Anzeige falscher Schriftarten führen, wenn diese nicht dort lokal installiert sind.)
+Für das Kompilieren sind unter Umständen zusätzliche Schriftarten notwendig ("CM Roman") sowie Ghostscipt um diese in die PDF Plots und später in das durch PDFLatex erzeugte PDF einzubinden. (Es kann sonst auf anderen PCs zur Anzeige falscher Schriftarten kommen, wenn diese nicht dort lokal installiert sind.)
