@@ -18,3 +18,9 @@ Der Code ist in mehreren "Ebenen" organisiert:
    - **simWS_flow.R**: Ablauf für simulierte, künstliche WS
    - **size_flow.R**: Ablauf für verschiedene Stichproben mit künstlicher WS
    - **empWS_flow.R**: Ablauf für empirische WS (vgl. Ordner **fpi_WS**)
+
+
+## Bedeutung der .rda Dateien
+
+- tKS_1432.rda: Simulierte WS mit Seed 1432 (Seed = Uhrzeit des Startens der Simulation)
+- fitted_models_[WS]_[Seed]_[Stichprobengröße]_[Anzahl an Datensätzen]_[Datensimulationsseed =  42].rda (42: [“life, the universe and everything”](https://de.wikipedia.org/wiki/42_(Antwort)))]: Angepasste Modellschätzungen, Ausgangspunkt der weiteren Auswertung (siehe **/R Sweave/Fehlende_Daten_pks.Rnw**)
